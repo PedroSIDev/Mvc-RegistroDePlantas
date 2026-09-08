@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS mvc_java
+CREATE DATABASE IF NOT EXISTS mvcplantas
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE mvc_java;
+USE mvcplantas;
 
 -- =========================================
 -- TABELA 1: PERFIS
