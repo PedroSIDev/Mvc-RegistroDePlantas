@@ -9,5 +9,20 @@
 </head>
 <body>
 
+<main class="container">
+    <h1>Plantas Domésticas</h1>
+    <h2>Entrar</h2>
+
+    <form action="${pageContext.request.contextPath}/login" method="post">
+        <label for="login">Login</label>
+        <input id="login" name="login" type="text" required>
+
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+</main>
+
 </body>
 </html>
