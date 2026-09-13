@@ -35,3 +35,7 @@ mysql/
 scratch/
 .DS_Store
 Thumbs.db
+
+#Arquivos de projeto
+DIVISAO_TAREFAS.md
+IMPLEMENTACOES_PESSOA_1.md
