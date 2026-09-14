@@ -41,6 +41,46 @@ public class UsuarioDAO extends MysqlDAO {
         return null;
     }
 
+    public Usuario buscarPorLogin(String login) {
+        String sql = "SELECT u.id, u.nome, u.login, u.senha, u.perfil_id, p.id AS perfil_id_rel, p.nome AS perfil_nome "
+                + "FROM usuarios u INNER JOIN perfis p ON p.id = u.perfil_id WHERE u.login = ?";
+        try (ResultSet rs = super.executar(sql, login)) {
+            if (rs.next()) {
+                return mapear(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar usuário por login.", e);
+        }
+        return null;
+    }
+
+    public void inserir(Usuario usuario) {
+        String sql = "INSERT INTO usuarios (nome, login, senha, perfil_id) VALUES (?, ?, ?, ?)";
+        try {
+            super.executarUpdate(sql, usuario.getNome(), usuario.getLogin(), usuario.getSenha(), usuario.getPerfilId());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao inserir usuário.", e);
+        }
+    }
+
+    public void alterar(Usuario usuario) {
+        String sql = "UPDATE usuarios SET nome = ?, login = ?, senha = ?, perfil_id = ? WHERE id = ?";
+        try {
+            super.executarUpdate(sql, usuario.getNome(), usuario.getLogin(), usuario.getSenha(), usuario.getPerfilId(), usuario.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao alterar usuário.", e);
+        }
+    }
+
+    public void deletar(Long id) {
+        String sql = "DELETE FROM usuarios WHERE id = ?";
+        try {
+            super.executarUpdate(sql, id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao excluir usuário.", e);
+        }
+    }
+
     private Usuario mapear(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
         usuario.setId(rs.getLong("id"));
