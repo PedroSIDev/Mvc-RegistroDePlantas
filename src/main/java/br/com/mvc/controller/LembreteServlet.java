@@ -3,9 +3,7 @@ package br.com.mvc.controller;
 import java.io.IOException;
 import java.util.List;
 
-import br.com.mvc.model.Cuidado;
 import br.com.mvc.model.Lembrete;
-import br.com.mvc.model.Planta;
 import br.com.mvc.service.CuidadoService;
 import br.com.mvc.service.LembreteService;
 import br.com.mvc.service.PlantaService;

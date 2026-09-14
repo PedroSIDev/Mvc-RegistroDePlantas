@@ -3,7 +3,6 @@ package br.com.mvc.controller;
 import java.io.IOException;
 import java.util.List;
 
-import br.com.mvc.model.Perfil;
 import br.com.mvc.model.Usuario;
 import br.com.mvc.service.PerfilService;
 import br.com.mvc.service.UsuarioService;
