@@ -6,7 +6,7 @@ services:
 
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mvc_java
+      MYSQL_DATABASE: mvcplantas
       MYSQL_USER: mvc_user
       MYSQL_PASSWORD: mvc123
 

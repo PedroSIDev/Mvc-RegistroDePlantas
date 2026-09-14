@@ -74,7 +74,7 @@ mvn clean package
 ### 3. Acessar a Aplicação
 Abra o navegador e acesse:
 - **Aplicação Web:** [http://localhost:8080/mvc/](http://localhost:8080/mvc/)
-- **Porta do MySQL:** `3306` (usuário: `mvc_user`, senha: `mvc123`, banco: `mvc_java`)
+- **Porta do MySQL:** `3306` (usuário: `mvc_user`, senha: `mvc123`, banco: `mvcplantas`)
 
 ---
 
