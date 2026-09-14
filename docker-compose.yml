@@ -17,9 +17,21 @@ services:
       - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 20s
+
   tomcat:
     image: tomcat:10.1-jdk21
     container_name: mvc-java-tomcat
+
+    environment:
+      DB_HOST: mysql
+      DB_USER: mvc_user
+      DB_PASSWORD: mvc123
 
     ports:
       - "8080:8080"
@@ -28,7 +40,8 @@ services:
       - ./deploy:/usr/local/tomcat/webapps
 
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
 volumes:
   mysql_data:

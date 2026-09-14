@@ -8,9 +8,10 @@ import java.sql.SQLException;
 
 public class MysqlSingleton {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/mvcplantas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String HOST = System.getenv().getOrDefault("DB_HOST", "localhost");
+    private static final String URL = "jdbc:mysql://" + HOST + ":3306/mvcplantas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String USER = System.getenv().getOrDefault("DB_USER", "mvc_user");
+    private static final String PASSWORD = System.getenv().getOrDefault("DB_PASSWORD", "mvc123");
 
     private static MysqlSingleton instance;
     private Connection conexao;
@@ -31,10 +32,27 @@ public class MysqlSingleton {
     }
 
     public Connection obterConexao() throws SQLException {
-        if (this.conexao == null || this.conexao.isClosed()) {
-            this.conexao = DriverManager.getConnection(URL, USER, PASSWORD);
+        if (this.conexao != null && !this.conexao.isClosed()) {
+            return this.conexao;
         }
-        return this.conexao;
+
+        SQLException lastException = null;
+        for (int tentativa = 1; tentativa <= 15; tentativa++) {
+            try {
+                this.conexao = DriverManager.getConnection(URL, USER, PASSWORD);
+                return this.conexao;
+            } catch (SQLException e) {
+                lastException = e;
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException interruptedException) {
+                    Thread.currentThread().interrupt();
+                    throw e;
+                }
+            }
+        }
+
+        throw lastException != null ? lastException : new SQLException("Não foi possível estabelecer conexão com o banco de dados.");
     }
 
     public ResultSet executar(String sql, Object... parametros) throws SQLException {
