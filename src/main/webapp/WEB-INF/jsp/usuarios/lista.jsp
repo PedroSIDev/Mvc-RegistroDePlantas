@@ -26,8 +26,13 @@
         </div>
 
         <c:if test="${not empty sessionScope.mensagemSucesso}">
-            <div class="alert alert-erro">${sessionScope.mensagemSucesso}</div>
+            <div class="alert alert-sucesso"><c:out value="${sessionScope.mensagemSucesso}"/></div>
             <c:remove var="mensagemSucesso" scope="session" />
+        </c:if>
+
+        <c:if test="${not empty sessionScope.mensagemErro}">
+            <div class="alert alert-erro"><c:out value="${sessionScope.mensagemErro}"/></div>
+            <c:remove var="mensagemErro" scope="session" />
         </c:if>
 
         <div class="table-wrap">
@@ -46,13 +51,15 @@
                         <c:when test="${not empty usuarios}">
                             <c:forEach var="usuario" items="${usuarios}">
                                 <tr>
-                                    <td>${usuario.id}</td>
-                                    <td>${usuario.nome}</td>
-                                    <td>${usuario.login}</td>
-                                    <td>${usuario.perfil.nome}</td>
+                                    <td><c:out value="${usuario.id}"/></td>
+                                    <td><c:out value="${usuario.nome}"/></td>
+                                    <td><c:out value="${usuario.login}"/></td>
+                                    <td><c:out value="${usuario.perfil.nome}"/></td>
                                     <td class="links">
                                         <a href="${pageContext.request.contextPath}/usuarios?acao=editar&id=${usuario.id}">Editar</a>
-                                        <a href="${pageContext.request.contextPath}/usuarios?acao=excluir&id=${usuario.id}" onclick="return confirm('Deseja excluir este usuário?');">Excluir</a>
+                                        <c:if test="${sessionScope.usuarioLogado.id != usuario.id}">
+                                            <a href="${pageContext.request.contextPath}/usuarios?acao=excluir&id=${usuario.id}" onclick="return confirm('Deseja excluir este usuário?');">Excluir</a>
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>

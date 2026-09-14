@@ -39,7 +39,7 @@
 
             <div class="form-group">
                 <label for="nome">Nome</label>
-                <input id="nome" name="nome" type="text" value="${perfil.nome}" required>
+                <input id="nome" name="nome" type="text" value="<c:out value='${perfil.nome}'/>" required>
             </div>
 
             <div class="actions">

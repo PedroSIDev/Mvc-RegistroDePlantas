@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/login")
 public class LoginServlet extends BaseServlet {
@@ -17,7 +18,8 @@ public class LoginServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (request.getSession(false) != null && request.getSession(false).getAttribute("usuarioLogado") != null) {
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("usuarioLogado") != null) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
@@ -37,7 +39,14 @@ public class LoginServlet extends BaseServlet {
             return;
         }
 
-        request.getSession().setAttribute("usuarioLogado", usuario);
+        // Prevenção contra fixação de sessão (Session Fixation)
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
+        }
+
+        HttpSession newSession = request.getSession(true);
+        newSession.setAttribute("usuarioLogado", usuario);
         response.sendRedirect(request.getContextPath() + "/home");
     }
 }

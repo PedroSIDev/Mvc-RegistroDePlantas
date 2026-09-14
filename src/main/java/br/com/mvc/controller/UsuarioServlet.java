@@ -41,8 +41,13 @@ public class UsuarioServlet extends BaseServlet {
         if ("excluir".equals(acao)) {
             Long id = parseId(request.getParameter("id"));
             if (id != null) {
-                usuarioService.excluir(id);
-                request.getSession().setAttribute("mensagemSucesso", "Usuário excluído com sucesso.");
+                Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("usuarioLogado");
+                try {
+                    usuarioService.excluir(id, usuarioLogado);
+                    request.getSession().setAttribute("mensagemSucesso", "Usuário excluído com sucesso.");
+                } catch (IllegalArgumentException e) {
+                    request.getSession().setAttribute("mensagemErro", e.getMessage());
+                }
             }
             redirect(request, response, "/usuarios");
             return;

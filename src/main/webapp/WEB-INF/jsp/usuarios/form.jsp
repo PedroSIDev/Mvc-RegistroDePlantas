@@ -39,17 +39,20 @@
 
             <div class="form-group">
                 <label for="nome">Nome</label>
-                <input id="nome" name="nome" type="text" value="${usuario.nome}" required>
+                <input id="nome" name="nome" type="text" value="<c:out value='${usuario.nome}'/>" required>
             </div>
 
             <div class="form-group">
                 <label for="login">Login</label>
-                <input id="login" name="login" type="text" value="${usuario.login}" required>
+                <input id="login" name="login" type="text" value="<c:out value='${usuario.login}'/>" required>
             </div>
 
             <div class="form-group">
-                <label for="senha">Senha</label>
-                <input id="senha" name="senha" type="password" value="${usuario.senha}" required>
+                <label for="senha">Senha ${not empty usuario.id ? '(Opcional)' : ''}</label>
+                <input id="senha" name="senha" type="password" autocomplete="new-password" ${empty usuario.id ? 'required minlength="6"' : 'minlength="6"'}>
+                <c:if test="${not empty usuario.id}">
+                    <small style="display:block; margin-top: 4px; color: #666;">Deixe em branco para manter a senha atual. (Mínimo de 6 caracteres se for alterar)</small>
+                </c:if>
             </div>
 
             <div class="form-group">

@@ -205,6 +205,12 @@ select {
     border: 1px solid #fecdca;
 }
 
+.alert-sucesso {
+    background: var(--ok-bg);
+    color: #027a48;
+    border: 1px solid #a6f4c5;
+}
+
 .table-wrap {
     overflow-x: auto;
     background: var(--surface);

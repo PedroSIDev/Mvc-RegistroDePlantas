@@ -14,7 +14,7 @@
     <h2>Entrar</h2>
 
     <c:if test="${not empty erroLogin}">
-        <div class="alert alert-erro">${erroLogin}</div>
+        <div class="alert alert-erro"><c:out value="${erroLogin}"/></div>
     </c:if>
 
     <form action="${pageContext.request.contextPath}/login" method="post">

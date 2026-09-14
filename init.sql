@@ -94,10 +94,11 @@ INSERT INTO perfis (nome) VALUES
     ('Administrador'),
     ('Jardineiro');
 
+-- Senha padrao inicial dos usuarios de seed: 123456 (criptografada com BCrypt)
 INSERT INTO usuarios (nome, login, senha, perfil_id) VALUES
-    ('Pedro Henrique', 'pedro', '123456', 1),
-    ('Miguel Garcia', 'miguel', '123456', 1),
-    ('Usuario Teste', 'teste', '123456', 2);
+    ('Pedro Henrique', 'pedro', '$2a$12$VlW/RXxONLPaguKIAdkZU.TOoDvQVoBid9vkTnWe.oZQ/0.4u55Cm', 1),
+    ('Miguel Garcia', 'miguel', '$2a$12$VlW/RXxONLPaguKIAdkZU.TOoDvQVoBid9vkTnWe.oZQ/0.4u55Cm', 1),
+    ('Usuario Teste', 'teste', '$2a$12$VlW/RXxONLPaguKIAdkZU.TOoDvQVoBid9vkTnWe.oZQ/0.4u55Cm', 2);
 
 INSERT INTO ambientes (nome, descricao) VALUES
     ('Sala de Estar', 'Ambiente interno com luz indireta'),
