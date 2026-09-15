@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class MysqlSingleton {
 
     private static final String HOST = System.getenv().getOrDefault("DB_HOST", "localhost");
-    private static final String URL = "jdbc:mysql://" + HOST + ":3306/mvcplantas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://" + HOST + ":3306/mvcplantas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8";
     private static final String USER = System.getenv().getOrDefault("DB_USER", "mvc_user");
     private static final String PASSWORD = System.getenv().getOrDefault("DB_PASSWORD", "mvc123");
 

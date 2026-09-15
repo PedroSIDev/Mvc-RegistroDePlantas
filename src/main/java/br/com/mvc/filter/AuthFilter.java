@@ -55,6 +55,7 @@ public class AuthFilter implements Filter {
         boolean isPaginaPublica = servletPath.equals("")
                 || servletPath.equals("/")
                 || servletPath.equals("/index.jsp")
+            || servletPath.equals("/landing")
                 || servletPath.equals("/login")
                 || servletPath.equals("/logout");
 

@@ -3,6 +3,7 @@ CREATE DATABASE IF NOT EXISTS mvcplantas
     COLLATE utf8mb4_unicode_ci;
 
 USE mvcplantas;
+SET NAMES utf8mb4;
 
 -- =========================================
 -- TABELA 1: PERFIS

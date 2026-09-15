@@ -1,6 +1,6 @@
 <%--
-  Redireciona a raiz da aplicacao para o login.
+  Encaminha a raiz da aplicacao para a landing page.
 --%>
 <%
-    response.sendRedirect(request.getContextPath() + "/login");
+    request.getRequestDispatcher("/WEB-INF/jsp/landing.jsp").forward(request, response);
 %>
