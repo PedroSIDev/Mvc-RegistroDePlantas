@@ -1,87 +1,159 @@
 # Sistema de Registro de Plantas Domésticas 🌱
 
-**Projeto Acadêmico - Arquitetura MVC em Java**  
-**Disciplina:** Aplicações para Internet  
+Projeto acadêmico desenvolvido para a disciplina de Aplicações para Internet, com foco em arquitetura MVC em Java para a gestão de plantas domésticas, ambientes, cuidados e lembretes.
 
----
+## 👥 Integrantes
 
-## 👥 Integrantes do Projeto
+- Pedro Henrique – RA: 5162347
+- Miguel Garcia – RA: 5160094
 
-- **Pedro Henrique** – RA: `5162347`
-- **Miguel Garcia** – RA: `5160094`
+## 📌 Visão Geral
 
----
+A aplicação permite que usuários cadastrem, consultem e gerenciem:
 
-## 📖 Sobre o Projeto
+- plantas domésticas
+- ambientes da casa onde cada planta é mantida
+- tipos de cuidados botânicos
+- lembretes de manutenção e rotina de cuidado
+- perfis de acesso e usuários do sistema
 
-O **Sistema de Registro de Plantas Domésticas** é uma aplicação web baseada no padrão arquitetural **MVC (Model-View-Controller)** desenvolvida com **Java**, **Jakarta Servlets**, **JSP / JSTL**, **MySQL** e **Docker**.
+O sistema foi implementado com Java, Jakarta Servlet, JSP, JSTL, JDBC, MySQL e Docker, seguindo a organização em camadas MVC.
 
-A aplicação permite aos usuários:
-1. **Cadastrar e gerenciar plantas domésticas** pertencentes à sua coleção.
-2. **Organizar as plantas por ambientes** da casa (sala, varanda, jardim de inverno, etc.).
-3. **Consultar e cadastrar tipos de cuidados botânicos** (rega, adubação, poda, banho de sol, troca de vaso).
-4. **Agendar e acompanhar lembretes de cuidados**, monitorando manutenções pendentes e histórico de cuidados concluídos.
-5. **Autenticação e controle de perfis de acesso** (Administrador, Usuário/Jardineiro).
+## ✨ Funcionalidades
 
----
+- autenticação de usuários com sessão
+- cadastro e edição de usuários
+- controle de perfis (Administrador e Jardineiro)
+- cadastro de ambientes
+- cadastro de plantas com vínculo a usuário e ambiente
+- cadastro de tipos de cuidado
+- agendamento de lembretes por planta e cuidado
+- atualização do status dos lembretes (PENDENTE, CONCLUIDO, CANCELADO)
+- filtros de acesso para rotas protegidas
+- mensagens de sucesso e erro na interface
 
-## 🏛️ Arquitetura do Software (MVC)
+## 🏗️ Arquitetura
 
-O projeto segue estritamente a separação de responsabilidades em camadas:
+A estrutura principal do código segue o padrão MVC:
 
-- **`br.com.mvc.model`**: Entidades e representações de negócio (`Planta`, `Usuario`, `Cuidado`, `Lembrete`, `Ambiente`, `Perfil`).
-- **`br.com.mvc.dao`**: Camada de persistência (Data Access Object) responsável pelas operações SQL (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) via JDBC.
-- **`br.com.mvc.service`**: Camada de regras de negócio, validações de campos e operações lógicas antes de persistir no banco.
-- **`br.com.mvc.controller`**: Servlets que interceptam as requisições HTTP, coordenam a chamada aos serviços e encaminham a resposta para a view correspondente.
-- **`br.com.mvc.filter`**: Filtros de autenticação e proteção de rotas privadas (`AuthFilter`).
-- **`src/main/webapp/WEB-INF/jsp/`**: Camada de visualização (Views) renderizada com páginas JSP e JSTL.
+- `br.com.mvc.model` — entidades de negócio
+- `br.com.mvc.dao` — acesso ao banco com JDBC
+- `br.com.mvc.service` — regras de negócio e validações
+- `br.com.mvc.controller` — servlets responsáveis por requisições HTTP
+- `br.com.mvc.filter` — controle de autenticação e proteção de rotas
+- `src/main/webapp/WEB-INF/jsp` — páginas JSP da camada de visualização
 
----
+## 🗄️ Banco de Dados
 
-## 🗄️ Modelagem do Banco de Dados (`init.sql`)
+O banco é criado automaticamente pelo script `init.sql` e inclui as tabelas:
 
-O banco de dados relacional foi modelado com as seguintes tabelas:
+- `perfis`
+- `usuarios`
+- `ambientes`
+- `cuidados`
+- `plantas`
+- `lembretes`
 
-1. **`perfis`**: Perfis de usuário (Administrador, Jardineiro).
-2. **`usuarios`**: Contas com credenciais de login e vínculo ao perfil.
-3. **`ambientes`**: Ambientes/cômodos da casa onde as plantas estão localizadas.
-4. **`cuidados`**: Tipos e parâmetros de cuidados botânicos (nome, descrição, intervalo em dias).
-5. **`plantas`**: Informações da planta (nome popular, nome científico, data de aquisição, observações, usuário e ambiente).
-6. **`lembretes`**: Agendamento de cuidados para cada planta com data prevista, data realizada e status (`PENDENTE`, `CONCLUIDO`, `CANCELADO`).
+Além disso, o script já insere dados iniciais para testes, como usuários, perfis, ambientes, cuidados e plantas.
 
----
+## 🔐 Usuários padrão
 
-## 🚀 Como Executar o Projeto
+Os usuários de seed criados no banco são:
+
+- login: `pedro` | senha: `123456`
+- login: `miguel` | senha: `123456`
+- login: `teste` | senha: `123456`
+
+A senha é armazenada em formato BCrypt.
+
+## 🧰 Tecnologias
+
+- Java 17
+- Maven
+- Jakarta Servlet 6.0
+- JSP + JSTL
+- MySQL 8.4
+- Apache Tomcat 10.1
+- Docker e Docker Compose
+- JUnit 4 para testes
+
+## 🚀 Como executar
 
 ### Pré-requisitos
-- **Java JDK 17+**
-- **Apache Maven 3.8+**
-- **Docker e Docker Compose**
 
-### 1. Subir os Containers (MySQL + Tomcat)
+- JDK 17+
+- Maven 3.8+
+- Docker + Docker Compose
+
+### 1. Subir os containers
+
 Na raiz do projeto, execute:
+
 ```bash
 docker compose up -d
 ```
-> O Docker iniciará automaticamente o banco MySQL (executando o `init.sql`) e o servidor Apache Tomcat 10.1.
 
-### 2. Compilar e Gerar o Pacote WAR
-Para compilar o código fonte e gerar o arquivo `.war` na pasta de deploy:
+Esse comando inicia:
+
+- container do MySQL na porta 3306
+- container do Tomcat na porta 8080
+
+### 2. Compilar o projeto
+
 ```bash
 mvn clean package
 ```
 
-### 3. Acessar a Aplicação
-Abra o navegador e acesse:
-- **Aplicação Web:** [http://localhost:8080/mvc/](http://localhost:8080/mvc/)
-- **Porta do MySQL:** `3306` (usuário: `mvc_user`, senha: `mvc123`, banco: `mvcplantas`)
+O WAR gerado é empacotado para a pasta `deploy` conforme configuração do Maven.
+
+### 3. Acessar a aplicação
+
+Após a compilação e o container estar funcionando, acesse:
+
+- http://localhost:8080/mvc/
+
+### 4. Conexão com banco
+
+- host: `localhost`
+- porta: `3306`
+- database: `mvcplantas`
+- usuário: `mvc_user`
+- senha: `mvc123`
+
+## 📁 Estrutura do projeto
+
+```text
+mvc/
+├── docker-compose.yml
+├── init.sql
+├── pom.xml
+├── README.md
+├── deploy/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   └── webapp/
+│   └── test/
+├── target/
+└── mysql/
+```
+
+## 🧪 Testes
+
+O projeto contém testes unitários na pasta `src/test/java`, cobrindo regras de negócio dos serviços principais.
+
+Para executar os testes:
+
+```bash
+mvn test
+```
+
+## ✅ Observações
+
+- O processo de autenticação protege rotas internas e redireciona usuários não autenticados para a tela de login.
+- A aplicação foi pensada para uso em ambiente acadêmico e demonstração de MVC com Java EE/Jakarta.
+- O arquivo `docker-compose.yml` já automatiza a inicialização do banco e do servidor web.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
-
-- **Linguagem:** Java 17+
-- **Web:** Jakarta Servlet 6.0 & JSTL 3.0
-- **Servidor de Aplicação:** Apache Tomcat 10.1 (Docker)
-- **Banco de Dados:** MySQL 8.4 (Docker)
-- **Gerenciador de Dependências:** Apache Maven
+Se quiser, posso também criar uma versão mais refinada do README com seção de screenshots, fluxos de uso e instruções de deploy em produção.
