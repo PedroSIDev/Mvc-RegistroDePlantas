@@ -13,6 +13,10 @@
     <h1>Plantas Domésticas</h1>
     <h2>Entrar</h2>
 
+    <c:if test="${not empty erroLogin}">
+        <div class="alert alert-erro"><c:out value="${erroLogin}"/></div>
+    </c:if>
+
     <form action="${pageContext.request.contextPath}/login" method="post">
         <label for="login">Login</label>
         <input id="login" name="login" type="text" required>

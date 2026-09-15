@@ -8,7 +8,7 @@ import java.util.List;
 import br.com.mvc.model.Perfil;
 
 public class PerfilDAO extends MysqlDAO {
-    public PerfilDAO() throws Exception {
+    public PerfilDAO() {
         super();
     }
 
@@ -28,7 +28,7 @@ public class PerfilDAO extends MysqlDAO {
     public Perfil buscarPorId(Long id) {
         String sql = "SELECT id, nome FROM perfis WHERE id = ?";
         try (ResultSet rs = super.executar(sql, id)) {
-            if (rs.next()) { // se encontrou
+            if (rs.next()) {
                 return this.mapear(rs);
             }
         } catch (SQLException e) {

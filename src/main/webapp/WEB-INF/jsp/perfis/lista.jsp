@@ -8,6 +8,65 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estilo.css">
 </head>
 <body>
+    <header class="topbar">
+        <div class="container">
+            <strong>Registro de Plantas</strong>
+            <nav>
+                <a href="${pageContext.request.contextPath}/home">Home</a>
+                <a href="${pageContext.request.contextPath}/usuarios">Usuários</a>
+                <a href="${pageContext.request.contextPath}/perfis">Perfis</a>
+            </nav>
+        </div>
+    </header>
 
+    <main class="container">
+        <div class="page-header">
+            <h1>Perfis</h1>
+            <a class="btn" href="${pageContext.request.contextPath}/perfis?acao=novo">Novo perfil</a>
+        </div>
+
+        <c:if test="${not empty sessionScope.mensagemSucesso}">
+            <div class="alert alert-sucesso"><c:out value="${sessionScope.mensagemSucesso}"/></div>
+            <c:remove var="mensagemSucesso" scope="session" />
+        </c:if>
+
+        <c:if test="${not empty sessionScope.mensagemErro}">
+            <div class="alert alert-erro"><c:out value="${sessionScope.mensagemErro}"/></div>
+            <c:remove var="mensagemErro" scope="session" />
+        </c:if>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${not empty perfis}">
+                            <c:forEach var="perfil" items="${perfis}">
+                                <tr>
+                                    <td><c:out value="${perfil.id}"/></td>
+                                    <td><c:out value="${perfil.nome}"/></td>
+                                    <td class="links">
+                                        <a href="${pageContext.request.contextPath}/perfis?acao=editar&id=${perfil.id}">Editar</a>
+                                        <a href="${pageContext.request.contextPath}/perfis?acao=excluir&id=${perfil.id}" onclick="return confirm('Deseja excluir este perfil?');">Excluir</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="3" class="empty">Nenhum perfil cadastrado.</td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
 </html>
