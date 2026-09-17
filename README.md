@@ -155,5 +155,3 @@ mvn test
 - O arquivo `docker-compose.yml` já automatiza a inicialização do banco e do servidor web.
 
 ---
-
-Se quiser, posso também criar uma versão mais refinada do README com seção de screenshots, fluxos de uso e instruções de deploy em produção.
