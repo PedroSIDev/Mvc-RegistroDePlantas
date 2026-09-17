@@ -39,7 +39,6 @@ public class LoginServlet extends BaseServlet {
             return;
         }
 
-        // Prevenção contra fixação de sessão (Session Fixation)
         HttpSession oldSession = request.getSession(false);
         if (oldSession != null) {
             oldSession.invalidate();

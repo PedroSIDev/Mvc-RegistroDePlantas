@@ -27,11 +27,9 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Padronização de encoding UTF-8
         httpRequest.setCharacterEncoding("UTF-8");
         httpResponse.setCharacterEncoding("UTF-8");
 
-        // Cabeçalhos de Segurança HTTP (Defesa em profundidade / OWASP)
         httpResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
@@ -42,7 +40,6 @@ public class AuthFilter implements Filter {
             servletPath = "";
         }
 
-        // Recursos estáticos e páginas públicas
         boolean isRecursoEstatico = servletPath.startsWith("/css/")
                 || servletPath.startsWith("/js/")
                 || servletPath.startsWith("/images/")
@@ -64,7 +61,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // Verificação de Autenticação
         HttpSession session = httpRequest.getSession(false);
         Usuario usuarioLogado = (session != null) ? (Usuario) session.getAttribute("usuarioLogado") : null;
 
@@ -73,8 +69,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // Verificação de Autorização Baseada em Perfil (RBAC)
-        // Apenas Administradores têm acesso ao gerenciamento de Usuários e Perfis
         boolean isRotaAdmin = servletPath.equals("/usuarios")
                 || servletPath.startsWith("/usuarios/")
                 || servletPath.equals("/perfis")

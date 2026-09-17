@@ -65,7 +65,7 @@ public class UsuarioServiceTest {
         editado.setId(999L);
         editado.setNome("Teste Editado");
         editado.setLogin("testeedit");
-        editado.setSenha(""); // Vazia para manter a atual
+        editado.setSenha("");
         editado.setPerfilId(2L);
 
         List<String> erros = service.validar(editado);

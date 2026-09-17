@@ -29,7 +29,6 @@ public class PasswordUtil {
             }
         }
 
-        // Suporte a compatibilidade temporária para senhas legadas em texto puro
         return plainText.equals(hashed);
     }
 

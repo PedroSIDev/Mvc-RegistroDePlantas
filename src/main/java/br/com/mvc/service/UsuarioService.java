@@ -36,7 +36,6 @@ public class UsuarioService {
             }
         }
 
-        // Para novo cadastro, a senha é obrigatória e deve ter pelo menos 6 caracteres
         if (usuario.getId() == null) {
             if (usuario.getSenha() == null || usuario.getSenha().trim().isEmpty()) {
                 erros.add("Senha é obrigatória.");
@@ -44,7 +43,6 @@ public class UsuarioService {
                 erros.add("A senha deve conter no mínimo 6 caracteres.");
             }
         } else {
-            // Em caso de edição, a senha é opcional; se preenchida, deve ter pelo menos 6 caracteres
             if (usuario.getSenha() != null && !usuario.getSenha().trim().isEmpty()) {
                 if (usuario.getSenha().trim().length() < 6) {
                     erros.add("A nova senha deve conter no mínimo 6 caracteres.");
@@ -81,7 +79,6 @@ public class UsuarioService {
         }
 
         if (usuario.getSenha() != null && PasswordUtil.verificar(senha.trim(), usuario.getSenha())) {
-            // Migração transparente: se a senha no banco não for hash BCrypt, atualiza automaticamente
             if (!PasswordUtil.isHashed(usuario.getSenha())) {
                 String novoHash = PasswordUtil.hash(senha.trim());
                 usuario.setSenha(novoHash);
@@ -102,7 +99,6 @@ public class UsuarioService {
 
     public void alterar(Usuario usuario) {
         if (usuario.getId() != null) {
-            // Se a senha não foi informada na alteração, mantém a senha atual do banco
             if (usuario.getSenha() == null || usuario.getSenha().trim().isEmpty()) {
                 Usuario usuarioAtual = usuarioDAO.buscarPorId(usuario.getId());
                 if (usuarioAtual != null) {
