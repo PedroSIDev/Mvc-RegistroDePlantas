@@ -29,29 +29,9 @@
         </a>
     </div>
 
-    <c:if test="${not empty sessionScope.mensagemSucesso}">
-        <div class="alert alert-sucesso">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-            <span><c:out value="${sessionScope.mensagemSucesso}"/></span>
-        </div>
-        <c:remove var="mensagemSucesso" scope="session" />
-    </c:if>
+    <jsp:include page="/WEB-INF/jsp/common/mensagens.jsp"/>
 
-    <c:if test="${not empty sessionScope.mensagemErro}">
-        <div class="alert alert-erro">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span><c:out value="${sessionScope.mensagemErro}"/></span>
-        </div>
-        <c:remove var="mensagemErro" scope="session" />
-    </c:if>
-
+    <c:if test="${not listaFalhou}">
     <div class="table-wrap">
         <c:choose>
             <c:when test="${not empty plantas}">
@@ -88,13 +68,20 @@
                                                 <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                                             </svg>
                                         </a>
-                                        <a class="btn-icon btn-icon-danger" href="${pageContext.request.contextPath}/plantas?acao=excluir&id=${planta.id}" onclick="return confirm('Deseja realmente excluir esta planta?');" title="Excluir planta">
+                                        <form action="${pageContext.request.contextPath}/plantas" method="post" class="delete-form"
+                                              data-nome="<c:out value='${planta.nomePopular}'/>"
+                                              onsubmit="return window.confirmarExclusao ? window.confirmarExclusao(event) : confirm('Deseja realmente excluir este registro?');">
+                                            <input type="hidden" name="acao" value="excluir">
+                                            <input type="hidden" name="id" value="${planta.id}">
+                                            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+                                            <button type="submit" class="btn-icon btn-icon-danger" title="Excluir planta" aria-label="Excluir planta">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M3 6h18"/>
                                                 <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
                                                 <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
                                             </svg>
-                                        </a>
+                                        </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -123,6 +110,7 @@
             </c:otherwise>
         </c:choose>
     </div>
+    </c:if>
 </main>
 
 </body>

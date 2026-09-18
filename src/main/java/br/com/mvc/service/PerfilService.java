@@ -22,6 +22,16 @@ public class PerfilService {
             return erros;
         }
 
+        perfil.setNome(Validacao.texto(perfil.getNome()));
+        Validacao.tamanho(erros, perfil.getNome(), 100, "Nome do perfil");
+        if (perfil.getId() != null) {
+            Perfil atual = buscarPorId(perfil.getId());
+            if (atual != null && "Administrador".equalsIgnoreCase(atual.getNome())
+                    && !"Administrador".equals(perfil.getNome())) {
+                erros.add("O nome do perfil Administrador é reservado e não pode ser alterado.");
+            }
+        }
+
         if (perfil.getNome() == null || perfil.getNome().trim().isEmpty()) {
             erros.add("Nome do perfil é obrigatório.");
         }
@@ -34,23 +44,26 @@ public class PerfilService {
     }
 
     public Perfil buscarPorId(Long id) {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return null;
         }
         return perfilDAO.buscarPorId(id);
     }
 
     public void inserir(Perfil perfil) {
+        Validacao.exigir(validar(perfil));
         perfilDAO.inserir(perfil);
     }
 
     public void alterar(Perfil perfil) {
+        Validacao.exigir(validar(perfil));
+        if (buscarPorId(perfil.getId()) == null) {
+            throw new IllegalArgumentException("Perfil não encontrado. Atualize a lista e tente novamente.");
+        }
         perfilDAO.alterar(perfil);
     }
 
     public void excluir(Long id) {
-        if (id != null) {
-            perfilDAO.deletar(id);
-        }
+        perfilDAO.deletar(id);
     }
 }

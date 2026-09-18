@@ -22,6 +22,11 @@ public class CuidadoService {
             return erros;
         }
 
+        cuidado.setNome(Validacao.texto(cuidado.getNome()));
+        cuidado.setDescricao(Validacao.opcional(cuidado.getDescricao()));
+        Validacao.tamanho(erros, cuidado.getNome(), 100, "Nome do cuidado");
+        Validacao.textoLongo(erros, cuidado.getDescricao(), "Observações / descrição");
+
         if (cuidado.getNome() == null || cuidado.getNome().trim().isEmpty()) {
             erros.add("Nome do cuidado é obrigatório.");
         }
@@ -38,23 +43,26 @@ public class CuidadoService {
     }
 
     public Cuidado buscarPorId(Long id) {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return null;
         }
         return cuidadoDAO.buscarPorId(id);
     }
 
     public void inserir(Cuidado cuidado) {
+        Validacao.exigir(validar(cuidado));
         cuidadoDAO.inserir(cuidado);
     }
 
     public void alterar(Cuidado cuidado) {
+        Validacao.exigir(validar(cuidado));
+        if (buscarPorId(cuidado.getId()) == null) {
+            throw new IllegalArgumentException("Cuidado não encontrado. Atualize a lista e tente novamente.");
+        }
         cuidadoDAO.alterar(cuidado);
     }
 
     public void excluir(Long id) {
-        if (id != null) {
-            cuidadoDAO.deletar(id);
-        }
+        cuidadoDAO.deletar(id);
     }
 }

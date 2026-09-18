@@ -28,6 +28,15 @@ public class PlantaService {
             return erros;
         }
 
+        planta.setNomePopular(Validacao.texto(planta.getNomePopular()));
+        planta.setNomeCientifico(Validacao.opcional(planta.getNomeCientifico()));
+        planta.setDataAquisicao(Validacao.opcional(planta.getDataAquisicao()));
+        planta.setObservacoes(Validacao.opcional(planta.getObservacoes()));
+        Validacao.tamanho(erros, planta.getNomePopular(), 150, "Nome popular");
+        Validacao.tamanho(erros, planta.getNomeCientifico(), 150, "Nome científico");
+        Validacao.textoLongo(erros, planta.getObservacoes(), "Observações / descrição");
+        Validacao.data(erros, planta.getDataAquisicao(), "Data de aquisição");
+
         if (planta.getNomePopular() == null || planta.getNomePopular().trim().isEmpty()) {
             erros.add("Nome popular da planta é obrigatório.");
         }
@@ -52,23 +61,26 @@ public class PlantaService {
     }
 
     public Planta buscarPorId(Long id) {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return null;
         }
         return plantaDAO.buscarPorId(id);
     }
 
     public void inserir(Planta planta) {
+        Validacao.exigir(validar(planta));
         plantaDAO.inserir(planta);
     }
 
     public void alterar(Planta planta) {
+        Validacao.exigir(validar(planta));
+        if (buscarPorId(planta.getId()) == null) {
+            throw new IllegalArgumentException("Planta não encontrada. Atualize a lista e tente novamente.");
+        }
         plantaDAO.alterar(planta);
     }
 
     public void excluir(Long id) {
-        if (id != null) {
-            plantaDAO.deletar(id);
-        }
+        plantaDAO.deletar(id);
     }
 }

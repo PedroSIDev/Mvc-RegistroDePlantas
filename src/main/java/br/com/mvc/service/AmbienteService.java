@@ -22,6 +22,11 @@ public class AmbienteService {
             return erros;
         }
 
+        ambiente.setNome(Validacao.texto(ambiente.getNome()));
+        ambiente.setDescricao(Validacao.opcional(ambiente.getDescricao()));
+        Validacao.tamanho(erros, ambiente.getNome(), 100, "Nome do ambiente");
+        Validacao.tamanho(erros, ambiente.getDescricao(), 255, "Descrição");
+
         if (ambiente.getNome() == null || ambiente.getNome().trim().isEmpty()) {
             erros.add("Nome do ambiente é obrigatório.");
         }
@@ -34,23 +39,26 @@ public class AmbienteService {
     }
 
     public Ambiente buscarPorId(Long id) {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return null;
         }
         return ambienteDAO.buscarPorId(id);
     }
 
     public void inserir(Ambiente ambiente) {
+        Validacao.exigir(validar(ambiente));
         ambienteDAO.inserir(ambiente);
     }
 
     public void alterar(Ambiente ambiente) {
+        Validacao.exigir(validar(ambiente));
+        if (buscarPorId(ambiente.getId()) == null) {
+            throw new IllegalArgumentException("Ambiente não encontrado. Atualize a lista e tente novamente.");
+        }
         ambienteDAO.alterar(ambiente);
     }
 
     public void excluir(Long id) {
-        if (id != null) {
-            ambienteDAO.deletar(id);
-        }
+        ambienteDAO.deletar(id);
     }
 }

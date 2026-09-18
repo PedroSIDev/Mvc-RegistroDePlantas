@@ -1,15 +1,19 @@
 package br.com.mvc.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.mvc.dao.UsuarioDAO;
+import br.com.mvc.dao.PerfilDAO;
+import br.com.mvc.model.Perfil;
 import br.com.mvc.model.Usuario;
 import br.com.mvc.security.PasswordUtil;
 
 public class UsuarioService {
 
     private final UsuarioDAO usuarioDAO;
+    private final PerfilDAO perfilDAO = new PerfilDAO();
 
     public UsuarioService() {
         this.usuarioDAO = new UsuarioDAO();
@@ -21,6 +25,15 @@ public class UsuarioService {
         if (usuario == null) {
             erros.add("Usuário inválido.");
             return erros;
+        }
+
+        usuario.setNome(Validacao.texto(usuario.getNome()));
+        usuario.setLogin(Validacao.texto(usuario.getLogin()));
+        Validacao.tamanho(erros, usuario.getNome(), 150, "Nome do usuário");
+        Validacao.tamanho(erros, usuario.getLogin(), 100, "Login");
+        if (usuario.getSenha() != null
+                && usuario.getSenha().trim().getBytes(StandardCharsets.UTF_8).length > 72) {
+            erros.add("A senha é muito longa. Use no máximo 72 bytes (acentos podem ocupar mais de um byte).");
         }
 
         if (usuario.getNome() == null || usuario.getNome().trim().isEmpty()) {
@@ -52,6 +65,20 @@ public class UsuarioService {
 
         if (usuario.getPerfilId() == null) {
             erros.add("Perfil é obrigatório.");
+        } else {
+            Perfil perfil = perfilDAO.buscarPorId(usuario.getPerfilId());
+            if (perfil == null) {
+                erros.add("O perfil selecionado não existe mais. Selecione outro perfil.");
+            } else if (usuario.getId() != null) {
+                Usuario atual = buscarPorId(usuario.getId());
+                if (atual != null && atual.getPerfil() != null
+                        && "Administrador".equalsIgnoreCase(atual.getPerfil().getNome())
+                        && !"Administrador".equalsIgnoreCase(perfil.getNome())
+                        && listarTodos().stream().filter(u -> u.getPerfil() != null
+                            && "Administrador".equalsIgnoreCase(u.getPerfil().getNome())).count() <= 1) {
+                    erros.add("Não é permitido alterar o perfil do único administrador do sistema.");
+                }
+            }
         }
 
         return erros;
@@ -62,7 +89,7 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorId(Long id) {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return null;
         }
         return usuarioDAO.buscarPorId(id);
@@ -91,6 +118,7 @@ public class UsuarioService {
     }
 
     public void inserir(Usuario usuario) {
+        Validacao.exigir(validar(usuario));
         if (usuario.getSenha() != null && !usuario.getSenha().trim().isEmpty()) {
             usuario.setSenha(PasswordUtil.hash(usuario.getSenha().trim()));
         }
@@ -98,13 +126,17 @@ public class UsuarioService {
     }
 
     public void alterar(Usuario usuario) {
+        Validacao.exigir(validar(usuario));
+        if (buscarPorId(usuario.getId()) == null) {
+            throw new IllegalArgumentException("Usuário não encontrado. Atualize a lista e tente novamente.");
+        }
         if (usuario.getId() != null) {
             if (usuario.getSenha() == null || usuario.getSenha().trim().isEmpty()) {
                 Usuario usuarioAtual = usuarioDAO.buscarPorId(usuario.getId());
                 if (usuarioAtual != null) {
                     usuario.setSenha(usuarioAtual.getSenha());
                 }
-            } else if (!PasswordUtil.isHashed(usuario.getSenha())) {
+            } else {
                 usuario.setSenha(PasswordUtil.hash(usuario.getSenha().trim()));
             }
         }
@@ -112,8 +144,8 @@ public class UsuarioService {
     }
 
     public void excluir(Long id, Usuario usuarioLogado) {
-        if (id == null) {
-            return;
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Selecione um usuário válido para excluir.");
         }
 
         if (usuarioLogado != null && id.equals(usuarioLogado.getId())) {

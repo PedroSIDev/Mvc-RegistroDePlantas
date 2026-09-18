@@ -29,25 +29,11 @@
         </a>
     </div>
 
-    <c:if test="${not empty erros}">
-        <div class="alert alert-erro">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <div>
-                <strong>Por favor, corrija os seguintes itens:</strong>
-                <ul>
-                    <c:forEach var="erro" items="${erros}">
-                        <li><c:out value="${erro}"/></li>
-                    </c:forEach>
-                </ul>
-            </div>
-        </div>
-    </c:if>
+    <jsp:include page="/WEB-INF/jsp/common/mensagens.jsp"/>
 
     <form action="${pageContext.request.contextPath}/lembretes" method="post" class="card">
+        <input type="hidden" name="acao" value="salvar">
+        <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
         <input type="hidden" name="id" value="${lembrete.id}">
 
         <div class="form-grid">
@@ -78,17 +64,18 @@
 
             <div class="form-group">
                 <label for="dataAgendada">Data Agendada <span class="required">*</span></label>
-                <input id="dataAgendada" name="dataAgendada" type="date" value="${lembrete.dataAgendada}" required>
+                <input id="dataAgendada" name="dataAgendada" type="date" min="1000-01-01" max="9999-12-31" value="<c:out value='${lembrete.dataAgendada}'/>" required>
             </div>
 
             <div class="form-group">
-                <label for="dataRealizada">Data de Realização (se concluído)</label>
-                <input id="dataRealizada" name="dataRealizada" type="date" value="${lembrete.dataRealizada}">
+                <label for="dataRealizada">Data de Realização (obrigatória ao concluir)</label>
+                <input id="dataRealizada" name="dataRealizada" type="date" min="1000-01-01" max="9999-12-31" value="<c:out value='${lembrete.dataRealizada}'/>">
+                <span class="form-hint">Preencha ao concluir. Para deixar pendente ou cancelar, mantenha esta data vazia.</span>
             </div>
 
             <div class="form-group">
-                <label for="status">Status da Tarefa</label>
-                <select id="status" name="status">
+                <label for="status">Status da Tarefa <span class="required">*</span></label>
+                <select id="status" name="status" required>
                     <option value="PENDENTE" ${lembrete.status == 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
                     <option value="CONCLUIDO" ${lembrete.status == 'CONCLUIDO' ? 'selected' : ''}>CONCLUÍDO</option>
                     <option value="CANCELADO" ${lembrete.status == 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
@@ -97,7 +84,7 @@
 
             <div class="form-group full-width">
                 <label for="observacao">Observações Adicionais</label>
-                <textarea id="observacao" name="observacao" placeholder="Notas sobre a execução, dosagem de adubo utilizada ou estado da planta..."><c:out value="${lembrete.observacao}"/></textarea>
+                <textarea id="observacao" name="observacao" maxlength="255" placeholder="Notas sobre a execução, dosagem de adubo utilizada ou estado da planta..."><c:out value="${lembrete.observacao}"/></textarea>
             </div>
         </div>
 

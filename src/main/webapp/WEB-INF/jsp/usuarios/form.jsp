@@ -29,36 +29,22 @@
         </a>
     </div>
 
-    <c:if test="${not empty erros}">
-        <div class="alert alert-erro">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <div>
-                <strong>Por favor, corrija os seguintes itens:</strong>
-                <ul>
-                    <c:forEach var="erro" items="${erros}">
-                        <li><c:out value="${erro}"/></li>
-                    </c:forEach>
-                </ul>
-            </div>
-        </div>
-    </c:if>
+    <jsp:include page="/WEB-INF/jsp/common/mensagens.jsp"/>
 
     <form action="${pageContext.request.contextPath}/usuarios" method="post" class="card">
+        <input type="hidden" name="acao" value="salvar">
+        <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
         <input type="hidden" name="id" value="${usuario.id}">
 
         <div class="form-grid">
             <div class="form-group">
                 <label for="nome">Nome Completo <span class="required">*</span></label>
-                <input id="nome" name="nome" type="text" value="<c:out value='${usuario.nome}'/>" placeholder="Ex: Pedro Silva" required>
+                <input id="nome" name="nome" maxlength="150" type="text" value="<c:out value='${usuario.nome}'/>" placeholder="Ex: Pedro Silva" required>
             </div>
 
             <div class="form-group">
                 <label for="login">Login de Acesso <span class="required">*</span></label>
-                <input id="login" name="login" type="text" value="<c:out value='${usuario.login}'/>" placeholder="Ex: pedrosilva" required>
+                <input id="login" name="login" maxlength="100" type="text" value="<c:out value='${usuario.login}'/>" placeholder="Ex: pedrosilva" required>
             </div>
 
             <div class="form-group">

@@ -66,19 +66,18 @@ public class UsuarioDAO extends MysqlDAO {
     public void alterar(Usuario usuario) {
         String sql = "UPDATE usuarios SET nome = ?, login = ?, senha = ?, perfil_id = ? WHERE id = ?";
         try {
-            super.executarUpdate(sql, usuario.getNome(), usuario.getLogin(), usuario.getSenha(), usuario.getPerfilId(), usuario.getId());
+            super.alterarExistente(sql, usuario.getNome(), usuario.getLogin(), usuario.getSenha(), usuario.getPerfilId(), usuario.getId());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao alterar usuário.", e);
         }
     }
 
     public void deletar(Long id) {
-        String sql = "DELETE FROM usuarios WHERE id = ?";
-        try {
-            super.executarUpdate(sql, id);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir usuário.", e);
-        }
+        excluirSemVinculos(id,
+                "SELECT id FROM usuarios WHERE id = ? FOR UPDATE",
+                "SELECT id FROM plantas WHERE usuario_id = ? LIMIT 1 FOR UPDATE",
+                "DELETE FROM usuarios WHERE id = ?",
+                "Não é possível excluir este usuário: existem plantas vinculadas. Transfira ou exclua essas plantas primeiro.");
     }
 
     private Usuario mapear(ResultSet rs) throws SQLException {

@@ -31,6 +31,10 @@ public class MysqlSingleton {
         return instance;
     }
 
+    public Connection abrirConexao() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
     public Connection obterConexao() throws SQLException {
         if (this.conexao != null && !this.conexao.isClosed()) {
             return this.conexao;

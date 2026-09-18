@@ -1,11 +1,12 @@
 package br.com.mvc.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.mvc.model.Usuario;
-import br.com.mvc.service.PerfilService;
 import br.com.mvc.service.UsuarioService;
+import br.com.mvc.service.PerfilService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,76 +22,109 @@ public class UsuarioServlet extends BaseServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String acao = request.getParameter("acao");
-
-        if ("novo".equals(acao)) {
-            request.setAttribute("usuario", new Usuario());
-            request.setAttribute("perfis", perfilService.listarTodos());
-            forward(request, response, "/WEB-INF/jsp/usuarios/form.jsp");
-            return;
-        }
-
-        if ("editar".equals(acao)) {
-            Long id = parseId(request.getParameter("id"));
-            Usuario usuario = usuarioService.buscarPorId(id);
-            request.setAttribute("usuario", usuario);
-            request.setAttribute("perfis", perfilService.listarTodos());
-            forward(request, response, "/WEB-INF/jsp/usuarios/form.jsp");
-            return;
-        }
-
-        if ("excluir".equals(acao)) {
-            Long id = parseId(request.getParameter("id"));
-            if (id != null) {
-                Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("usuarioLogado");
-                try {
-                    usuarioService.excluir(id, usuarioLogado);
-                    request.getSession().setAttribute("mensagemSucesso", "Usuário excluído com sucesso.");
-                } catch (IllegalArgumentException e) {
-                    request.getSession().setAttribute("mensagemErro", e.getMessage());
+        if (acao != null && !acao.isBlank()) {
+            try {
+                if ("excluir".equals(acao)) {
+                    throw new IllegalArgumentException("Para excluir, use o botão de exclusão e confirme a operação.");
                 }
+                if (!"novo".equals(acao) && !"editar".equals(acao)) {
+                    throw new IllegalArgumentException("Ação inválida. Selecione uma opção da lista.");
+                }
+                Usuario usuario = "novo".equals(acao) ? new Usuario()
+                        : usuarioService.buscarPorId(idObrigatorio(request));
+                if (usuario == null) {
+                    throw new IllegalArgumentException("Usuário não encontrado. O registro pode ter sido excluído.");
+                }
+                request.setAttribute("usuario", usuario);
+                carregarOpcoes(request);
+            } catch (RuntimeException e) {
+                mensagem(request, false, mensagemErro(e));
+                redirect(request, response, "/usuarios");
+                return;
             }
-            redirect(request, response, "/usuarios");
+            forward(request, response, "/WEB-INF/jsp/usuarios/form.jsp");
             return;
         }
 
-        List<Usuario> usuarios = usuarioService.listarTodos();
-        request.setAttribute("usuarios", usuarios);
+        try {
+            request.setAttribute("usuarios", usuarioService.listarTodos());
+        } catch (RuntimeException e) {
+            request.setAttribute("listaFalhou", true);
+            request.setAttribute("mensagemErro", mensagemErro(e));
+        }
         forward(request, response, "/WEB-INF/jsp/usuarios/lista.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Long id = parseId(request.getParameter("id"));
-        String nome = request.getParameter("nome");
-        String login = request.getParameter("login");
-        String senha = request.getParameter("senha");
-        Long perfilId = parseId(request.getParameter("perfilId"));
+        Long id;
+        try {
+            validarFormulario(request);
+            if ("excluir".equals(request.getParameter("acao"))) {
+                usuarioService.excluir(idObrigatorio(request), (Usuario) request.getSession().getAttribute("usuarioLogado"));
+                mensagem(request, true, "Usuário excluído com sucesso.");
+                redirect(request, response, "/usuarios");
+                return;
+            }
+            id = idFormulario(request);
+            if (id != null && usuarioService.buscarPorId(id) == null) {
+                throw new IllegalArgumentException("Usuário não encontrado. Atualize a lista antes de editar.");
+            }
+        } catch (RuntimeException e) {
+            mensagem(request, false, mensagemErro(e));
+            redirect(request, response, "/usuarios");
+            return;
+        }
 
         Usuario usuario = new Usuario();
         usuario.setId(id);
-        usuario.setNome(nome);
-        usuario.setLogin(login);
-        usuario.setSenha(senha);
-        usuario.setPerfilId(perfilId);
+        usuario.setNome(request.getParameter("nome"));
+        usuario.setLogin(request.getParameter("login"));
+        usuario.setSenha(request.getParameter("senha"));
+        usuario.setPerfilId(parseId(request.getParameter("perfilId")));
+        request.setAttribute("usuario", usuario);
 
-        List<String> erros = usuarioService.validar(usuario);
+        List<String> erros = new ArrayList<>();
+        try {
+            carregarOpcoes(request);
+            erros.addAll(usuarioService.validar(usuario));
+            if (erros.isEmpty()) {
+                usuario.setPerfil(perfilService.buscarPorId(usuario.getPerfilId()));
+                if (id == null) {
+                    usuarioService.inserir(usuario);
+                } else {
+                    usuarioService.alterar(usuario);
+                }
+            }
+        } catch (RuntimeException e) {
+            erros.add(mensagemErro(e));
+        }
+
         if (!erros.isEmpty()) {
-            request.setAttribute("usuario", usuario);
-            request.setAttribute("perfis", perfilService.listarTodos());
+            usuario.setSenha(null);
             request.setAttribute("erros", erros);
             forward(request, response, "/WEB-INF/jsp/usuarios/form.jsp");
             return;
         }
 
-        if (usuario.getId() == null) {
-            usuarioService.inserir(usuario);
-            request.getSession().setAttribute("mensagemSucesso", "Usuário cadastrado com sucesso.");
-        } else {
-            usuarioService.alterar(usuario);
-            request.getSession().setAttribute("mensagemSucesso", "Usuário atualizado com sucesso.");
+        Usuario logado = (Usuario) request.getSession().getAttribute("usuarioLogado");
+        if (logado != null && id != null && id.equals(logado.getId())) {
+            request.getSession().setAttribute("usuarioLogado", usuario);
         }
 
+        mensagem(request, true, id == null ? "Usuário cadastrado com sucesso."
+                : "Usuário atualizado com sucesso.");
+        if (logado != null && id != null && id.equals(logado.getId())
+                && (usuario.getPerfil() == null
+                    || !"Administrador".equalsIgnoreCase(usuario.getPerfil().getNome()))) {
+            redirect(request, response, "/home");
+            return;
+        }
         redirect(request, response, "/usuarios");
+    }
+
+    private void carregarOpcoes(HttpServletRequest request) {
+        request.setAttribute("perfis", perfilService.listarTodos());
     }
 }

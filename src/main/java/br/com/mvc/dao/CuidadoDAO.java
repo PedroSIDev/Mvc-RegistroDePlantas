@@ -50,19 +50,18 @@ public class CuidadoDAO extends MysqlDAO {
     public void alterar(Cuidado cuidado) {
         String sql = "UPDATE cuidados SET nome = ?, descricao = ?, dias_intervalo = ? WHERE id = ?";
         try {
-            super.executarUpdate(sql, cuidado.getNome(), cuidado.getDescricao(), cuidado.getDiasIntervalo(), cuidado.getId());
+            super.alterarExistente(sql, cuidado.getNome(), cuidado.getDescricao(), cuidado.getDiasIntervalo(), cuidado.getId());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao alterar cuidado.", e);
         }
     }
 
     public void deletar(Long id) {
-        String sql = "DELETE FROM cuidados WHERE id = ?";
-        try {
-            super.executarUpdate(sql, id);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir cuidado.", e);
-        }
+        excluirSemVinculos(id,
+                "SELECT id FROM cuidados WHERE id = ? FOR UPDATE",
+                "SELECT id FROM lembretes WHERE cuidado_id = ? LIMIT 1 FOR UPDATE",
+                "DELETE FROM cuidados WHERE id = ?",
+                "Não é possível excluir este cuidado: existem lembretes vinculados, inclusive concluídos ou cancelados. Remova ou altere esses lembretes primeiro.");
     }
 
     private Cuidado mapear(ResultSet rs) throws SQLException {

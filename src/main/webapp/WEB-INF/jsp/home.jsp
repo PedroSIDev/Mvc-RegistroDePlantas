@@ -20,28 +20,7 @@
         <p class="dashboard-hero-subtitle">Gerencie o cultivo, espaços e rotinas de manutenção da sua coleção botânica</p>
     </div>
 
-    <c:if test="${not empty sessionScope.mensagemErro}">
-        <div class="alert alert-erro">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span><c:out value="${sessionScope.mensagemErro}"/></span>
-        </div>
-        <c:remove var="mensagemErro" scope="session" />
-    </c:if>
-
-    <c:if test="${not empty sessionScope.mensagemSucesso}">
-        <div class="alert alert-sucesso">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-            <span><c:out value="${sessionScope.mensagemSucesso}"/></span>
-        </div>
-        <c:remove var="mensagemSucesso" scope="session" />
-    </c:if>
+    <jsp:include page="/WEB-INF/jsp/common/mensagens.jsp"/>
 
     <div class="grid-cards">
         <a class="menu-card" href="${pageContext.request.contextPath}/plantas">

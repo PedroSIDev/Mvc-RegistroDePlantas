@@ -66,7 +66,7 @@ CREATE TABLE plantas (
     ambiente_id BIGINT NOT NULL,
 
     PRIMARY KEY (id),
-    CONSTRAINT fk_planta_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_planta_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT,
     CONSTRAINT fk_planta_ambiente FOREIGN KEY (ambiente_id) REFERENCES ambientes(id)
 );
 
@@ -83,7 +83,7 @@ CREATE TABLE lembretes (
     observacao VARCHAR(255),
 
     PRIMARY KEY (id),
-    CONSTRAINT fk_lembrete_planta FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE CASCADE,
+    CONSTRAINT fk_lembrete_planta FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE RESTRICT,
     CONSTRAINT fk_lembrete_cuidado FOREIGN KEY (cuidado_id) REFERENCES cuidados(id)
 );
 

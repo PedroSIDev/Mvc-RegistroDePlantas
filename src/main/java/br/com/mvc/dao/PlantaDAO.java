@@ -69,7 +69,7 @@ public class PlantaDAO extends MysqlDAO {
         String sql = "UPDATE plantas SET nome_popular = ?, nome_cientifico = ?, data_aquisicao = ?, observacoes = ?, "
                 + "usuario_id = ?, ambiente_id = ? WHERE id = ?";
         try {
-            super.executarUpdate(sql, planta.getNomePopular(), planta.getNomeCientifico(), planta.getDataAquisicao(),
+            super.alterarExistente(sql, planta.getNomePopular(), planta.getNomeCientifico(), planta.getDataAquisicao(),
                     planta.getObservacoes(), planta.getUsuarioId(), planta.getAmbienteId(), planta.getId());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao alterar planta.", e);
@@ -77,12 +77,11 @@ public class PlantaDAO extends MysqlDAO {
     }
 
     public void deletar(Long id) {
-        String sql = "DELETE FROM plantas WHERE id = ?";
-        try {
-            super.executarUpdate(sql, id);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir planta.", e);
-        }
+        excluirSemVinculos(id,
+                "SELECT id FROM plantas WHERE id = ? FOR UPDATE",
+                "SELECT id FROM lembretes WHERE planta_id = ? LIMIT 1 FOR UPDATE",
+                "DELETE FROM plantas WHERE id = ?",
+                "Não é possível excluir esta planta: existem lembretes vinculados, inclusive concluídos ou cancelados. Remova ou altere esses lembretes primeiro.");
     }
 
     private Planta mapear(ResultSet rs) throws SQLException {

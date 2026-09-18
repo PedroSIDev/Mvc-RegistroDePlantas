@@ -50,19 +50,18 @@ public class AmbienteDAO extends MysqlDAO {
     public void alterar(Ambiente ambiente) {
         String sql = "UPDATE ambientes SET nome = ?, descricao = ? WHERE id = ?";
         try {
-            super.executarUpdate(sql, ambiente.getNome(), ambiente.getDescricao(), ambiente.getId());
+            super.alterarExistente(sql, ambiente.getNome(), ambiente.getDescricao(), ambiente.getId());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao alterar ambiente.", e);
         }
     }
 
     public void deletar(Long id) {
-        String sql = "DELETE FROM ambientes WHERE id = ?";
-        try {
-            super.executarUpdate(sql, id);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir ambiente.", e);
-        }
+        excluirSemVinculos(id,
+                "SELECT id FROM ambientes WHERE id = ? FOR UPDATE",
+                "SELECT id FROM plantas WHERE ambiente_id = ? LIMIT 1 FOR UPDATE",
+                "DELETE FROM ambientes WHERE id = ?",
+                "Não é possível excluir este ambiente: existem plantas vinculadas. Transfira ou exclua essas plantas primeiro.");
     }
 
     private Ambiente mapear(ResultSet rs) throws SQLException {

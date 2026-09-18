@@ -49,19 +49,18 @@ public class PerfilDAO extends MysqlDAO {
     public void alterar(Perfil perfil) {
         String sql = "UPDATE perfis SET nome = ? WHERE id = ?";
         try {
-            super.executarUpdate(sql, perfil.getNome(), perfil.getId());
+            super.alterarExistente(sql, perfil.getNome(), perfil.getId());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao alterar perfil.", e);
         }
     }
 
     public void deletar(Long id) {
-        String sql = "DELETE FROM perfis WHERE id = ?";
-        try {
-            super.executarUpdate(sql, id);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao deletar perfil.", e);
-        }
+        excluirSemVinculos(id,
+                "SELECT id FROM perfis WHERE id = ? FOR UPDATE",
+                "SELECT id FROM usuarios WHERE perfil_id = ? LIMIT 1 FOR UPDATE",
+                "DELETE FROM perfis WHERE id = ?",
+                "Não é possível excluir este perfil: existem usuários vinculados. Altere o perfil desses usuários primeiro.");
     }
 
     private Perfil mapear(ResultSet rs) throws SQLException {

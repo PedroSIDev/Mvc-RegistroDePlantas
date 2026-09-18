@@ -63,3 +63,5 @@
         </div>
     </div>
 </header>
+
+<jsp:include page="/WEB-INF/jsp/common/confirmacao.jsp"/>

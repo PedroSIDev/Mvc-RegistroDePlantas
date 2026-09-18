@@ -29,36 +29,22 @@
         </a>
     </div>
 
-    <c:if test="${not empty erros}">
-        <div class="alert alert-erro">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <div>
-                <strong>Por favor, corrija os seguintes campos:</strong>
-                <ul>
-                    <c:forEach var="erro" items="${erros}">
-                        <li><c:out value="${erro}"/></li>
-                    </c:forEach>
-                </ul>
-            </div>
-        </div>
-    </c:if>
+    <jsp:include page="/WEB-INF/jsp/common/mensagens.jsp"/>
 
     <form action="${pageContext.request.contextPath}/plantas" method="post" class="card">
+        <input type="hidden" name="acao" value="salvar">
+        <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
         <input type="hidden" name="id" value="${planta.id}">
 
         <div class="form-grid">
             <div class="form-group">
                 <label for="nomePopular">Nome popular <span class="required">*</span></label>
-                <input id="nomePopular" name="nomePopular" type="text" value="<c:out value='${planta.nomePopular}'/>" placeholder="Ex: Costela-de-Adão" required>
+                <input id="nomePopular" name="nomePopular" maxlength="150" type="text" value="<c:out value='${planta.nomePopular}'/>" placeholder="Ex: Costela-de-Adão" required>
             </div>
 
             <div class="form-group">
                 <label for="nomeCientifico">Nome científico</label>
-                <input id="nomeCientifico" name="nomeCientifico" type="text" value="<c:out value='${planta.nomeCientifico}'/>" placeholder="Ex: Monstera deliciosa">
+                <input id="nomeCientifico" name="nomeCientifico" maxlength="150" type="text" value="<c:out value='${planta.nomeCientifico}'/>" placeholder="Ex: Monstera deliciosa">
             </div>
 
             <div class="form-group">
@@ -87,7 +73,7 @@
 
             <div class="form-group">
                 <label for="dataAquisicao">Data de aquisição</label>
-                <input id="dataAquisicao" name="dataAquisicao" type="date" value="${planta.dataAquisicao}">
+                <input id="dataAquisicao" name="dataAquisicao" type="date" min="1000-01-01" max="9999-12-31" value="<c:out value='${planta.dataAquisicao}'/>">
             </div>
 
             <div class="form-group full-width">

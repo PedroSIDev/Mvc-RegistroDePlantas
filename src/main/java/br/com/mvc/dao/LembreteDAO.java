@@ -68,7 +68,7 @@ public class LembreteDAO extends MysqlDAO {
     public void alterar(Lembrete lembrete) {
         String sql = "UPDATE lembretes SET planta_id = ?, cuidado_id = ?, data_agendada = ?, data_realizada = ?, status = ?, observacao = ? WHERE id = ?";
         try {
-            super.executarUpdate(sql, lembrete.getPlantaId(), lembrete.getCuidadoId(), lembrete.getDataAgendada(),
+            super.alterarExistente(sql, lembrete.getPlantaId(), lembrete.getCuidadoId(), lembrete.getDataAgendada(),
                     lembrete.getDataRealizada(), lembrete.getStatus(), lembrete.getObservacao(), lembrete.getId());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao alterar lembrete.", e);
@@ -76,12 +76,11 @@ public class LembreteDAO extends MysqlDAO {
     }
 
     public void deletar(Long id) {
-        String sql = "DELETE FROM lembretes WHERE id = ?";
-        try {
-            super.executarUpdate(sql, id);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir lembrete.", e);
-        }
+        excluirSemVinculos(id,
+                "SELECT id FROM lembretes WHERE id = ? FOR UPDATE",
+                null,
+                "DELETE FROM lembretes WHERE id = ?",
+                null);
     }
 
     private Lembrete mapear(ResultSet rs) throws SQLException {
