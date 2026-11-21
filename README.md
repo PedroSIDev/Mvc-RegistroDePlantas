@@ -72,7 +72,7 @@ Para rodar os testes: `mvn test`.
 |---|---|---|
 | `pedro` | `123456` | Administrador |
 | `miguel` | `123456` | Administrador |
-| `teste` | `123456` | Jardineiro |
+| `patrick` | `123456` | Jardineiro |
 
 As senhas são guardadas com BCrypt.
 
