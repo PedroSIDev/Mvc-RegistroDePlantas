@@ -48,20 +48,20 @@
                     <tbody>
                         <c:forEach var="planta" items="${plantas}">
                             <tr>
-                                <td class="td-id">#${planta.id}</td>
-                                <td>
+                                <td class="td-id" data-label="ID">#${planta.id}</td>
+                                <td data-label="Espécie / Nome">
                                     <div class="td-main"><c:out value="${planta.nomePopular}"/></div>
                                     <c:if test="${not empty planta.nomeCientifico}">
                                         <span class="td-sub"><em><c:out value="${planta.nomeCientifico}"/></em></span>
                                     </c:if>
                                 </td>
-                                <td>
+                                <td data-label="Ambiente">
                                     <span class="badge badge-ambiente">
                                         <c:out value="${planta.ambiente.nome}"/>
                                     </span>
                                 </td>
-                                <td><c:out value="${planta.usuario.nome}"/></td>
-                                <td style="text-align: right;">
+                                <td data-label="Responsável"><c:out value="${planta.usuario.nome}"/></td>
+                                <td style="text-align: right;" data-label="Ações" class="td-actions">
                                     <div class="links" style="justify-content: flex-end;">
                                         <a class="btn-icon" href="${pageContext.request.contextPath}/plantas?acao=editar&id=${planta.id}" title="Editar planta">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

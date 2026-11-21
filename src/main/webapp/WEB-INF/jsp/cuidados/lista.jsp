@@ -47,20 +47,20 @@
                     <tbody>
                         <c:forEach var="cuidado" items="${cuidados}">
                             <tr>
-                                <td class="td-id">#${cuidado.id}</td>
-                                <td>
+                                <td class="td-id" data-label="ID">#${cuidado.id}</td>
+                                <td data-label="Procedimento / Cuidado">
                                     <div class="td-main"><c:out value="${cuidado.nome}"/></div>
                                     <c:if test="${not empty cuidado.descricao}">
                                         <span class="td-sub"><c:out value="${cuidado.descricao}"/></span>
                                     </c:if>
                                 </td>
-                                <td>
+                                <td data-label="Frequência Recomendada">
                                     <span class="badge badge-interval">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                         A cada ${cuidado.diasIntervalo} ${cuidado.diasIntervalo == 1 ? 'dia' : 'dias'}
                                     </span>
                                 </td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right;" data-label="Ações" class="td-actions">
                                     <div class="links" style="justify-content: flex-end;">
                                         <a class="btn-icon" href="${pageContext.request.contextPath}/cuidados?acao=editar&id=${cuidado.id}" title="Editar cuidado">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

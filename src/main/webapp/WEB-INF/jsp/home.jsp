@@ -16,11 +16,14 @@
 
 <main class="container">
     <div class="dashboard-hero">
+        <span class="dashboard-hero-eyebrow">Painel</span>
         <h1 class="dashboard-hero-title">Bem-vindo, <c:out value="${sessionScope.usuarioLogado.nome}"/></h1>
         <p class="dashboard-hero-subtitle">Gerencie o cultivo, espaços e rotinas de manutenção da sua coleção botânica</p>
     </div>
 
     <jsp:include page="/WEB-INF/jsp/common/mensagens.jsp"/>
+
+    <h2 class="section-label">Acesso rápido</h2>
 
     <div class="grid-cards">
         <a class="menu-card" href="${pageContext.request.contextPath}/plantas">

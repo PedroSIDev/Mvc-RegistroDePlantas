@@ -48,24 +48,24 @@
                     <tbody>
                         <c:forEach var="usuario" items="${usuarios}">
                             <tr>
-                                <td class="td-id">#${usuario.id}</td>
-                                <td>
+                                <td class="td-id" data-label="ID">#${usuario.id}</td>
+                                <td data-label="Nome do Usuário">
                                     <div class="td-main"><c:out value="${usuario.nome}"/></div>
                                     <c:if test="${sessionScope.usuarioLogado.id == usuario.id}">
                                         <span class="td-sub" style="color: var(--primary); font-weight: 500;">(Você atualmente)</span>
                                     </c:if>
                                 </td>
-                                <td>
+                                <td data-label="Login">
                                     <span style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.88rem; color: var(--text-secondary);">
                                         <c:out value="${usuario.login}"/>
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="Perfil de Acesso">
                                     <span class="badge-role">
                                         <c:out value="${usuario.perfil.nome}"/>
                                     </span>
                                 </td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right;" data-label="Ações" class="td-actions">
                                     <div class="links" style="justify-content: flex-end;">
                                         <a class="btn-icon" href="${pageContext.request.contextPath}/usuarios?acao=editar&id=${usuario.id}" title="Editar usuário">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

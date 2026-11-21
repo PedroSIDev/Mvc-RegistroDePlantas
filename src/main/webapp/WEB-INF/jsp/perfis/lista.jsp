@@ -46,11 +46,11 @@
                     <tbody>
                         <c:forEach var="perfil" items="${perfis}">
                             <tr>
-                                <td class="td-id">#${perfil.id}</td>
-                                <td>
+                                <td class="td-id" data-label="ID">#${perfil.id}</td>
+                                <td data-label="Nome do Perfil">
                                     <div class="td-main"><c:out value="${perfil.nome}"/></div>
                                 </td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right;" data-label="Ações" class="td-actions">
                                     <div class="links" style="justify-content: flex-end;">
                                         <a class="btn-icon" href="${pageContext.request.contextPath}/perfis?acao=editar&id=${perfil.id}" title="Editar perfil">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

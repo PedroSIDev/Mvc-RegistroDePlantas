@@ -49,20 +49,20 @@
                     <tbody>
                         <c:forEach var="lembrete" items="${lembretes}">
                             <tr>
-                                <td class="td-id">#${lembrete.id}</td>
-                                <td>
+                                <td class="td-id" data-label="ID">#${lembrete.id}</td>
+                                <td data-label="Planta">
                                     <div class="td-main"><c:out value="${lembrete.planta.nomePopular}"/></div>
                                     <c:if test="${not empty lembrete.planta.ambiente}">
                                         <span class="td-sub"><c:out value="${lembrete.planta.ambiente.nome}"/></span>
                                     </c:if>
                                 </td>
-                                <td>
+                                <td data-label="Cuidado">
                                     <span style="font-weight: 500;"><c:out value="${lembrete.cuidado.nome}"/></span>
                                     <c:if test="${not empty lembrete.observacao}">
                                         <span class="td-sub"><c:out value="${lembrete.observacao}"/></span>
                                     </c:if>
                                 </td>
-                                <td>
+                                <td data-label="Data Agendada">
                                     <span style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.88rem;">
                                         <c:out value="${lembrete.dataAgendada}"/>
                                     </span>
@@ -70,7 +70,7 @@
                                         <span class="td-sub" style="font-size: 0.78rem;">Feito em: <c:out value="${lembrete.dataRealizada}"/></span>
                                     </c:if>
                                 </td>
-                                <td>
+                                <td data-label="Status">
                                     <c:choose>
                                         <c:when test="${lembrete.status == 'CONCLUIDO'}">
                                             <span class="badge status-concluido">
@@ -92,7 +92,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right;" data-label="Ações" class="td-actions">
                                     <div class="links" style="justify-content: flex-end;">
                                         <a class="btn-icon" href="${pageContext.request.contextPath}/lembretes?acao=editar&id=${lembrete.id}" title="Editar lembrete">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

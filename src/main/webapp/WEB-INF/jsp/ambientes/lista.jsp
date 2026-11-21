@@ -47,11 +47,11 @@
                     <tbody>
                         <c:forEach var="ambiente" items="${ambientes}">
                             <tr>
-                                <td class="td-id">#${ambiente.id}</td>
-                                <td>
+                                <td class="td-id" data-label="ID">#${ambiente.id}</td>
+                                <td data-label="Nome do Ambiente">
                                     <div class="td-main"><c:out value="${ambiente.nome}"/></div>
                                 </td>
-                                <td>
+                                <td data-label="Descrição / Características">
                                     <c:choose>
                                         <c:when test="${not empty ambiente.descricao}">
                                             <span style="color: var(--text-secondary);"><c:out value="${ambiente.descricao}"/></span>
@@ -61,7 +61,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right;" data-label="Ações" class="td-actions">
                                     <div class="links" style="justify-content: flex-end;">
                                         <a class="btn-icon" href="${pageContext.request.contextPath}/ambientes?acao=editar&id=${ambiente.id}" title="Editar ambiente">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
