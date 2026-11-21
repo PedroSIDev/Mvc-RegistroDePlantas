@@ -1,176 +1,194 @@
 # Sistema de Registro de Plantas Domésticas 🌱
 
-Projeto acadêmico desenvolvido para a disciplina de Aplicações para Internet, com foco em arquitetura MVC em Java para a gestão de plantas domésticas, ambientes, cuidados e lembretes.
-
-## API REST - Trabalho T2
-
-A continuação do projeto acrescenta um CRUD REST de **plantas**, preservando as telas JSP,
-as camadas Controller/Service/DAO e o banco MySQL.
-
-- Base local: `http://localhost:8090/mvc/api/plantas`.
-- `GET /api/plantas`: listar; `GET /api/plantas/{id}`: consultar.
-- `POST /api/plantas`: criar (201 e Location).
-- `PUT /api/plantas/{id}`: substituir os dados editáveis (200).
-- `DELETE /api/plantas/{id}`: excluir (204), com bloqueio de vínculos (409).
-- Autenticação HTTP Basic em cada requisição; entrada e saída JSON UTF-8.
-- Senhas/hashes não integram o contrato público da API.
-
-Documentação: [endpoints, payloads e exemplos](docs/API.md).
-Material: [planejamento](docs/PLANEJAMENTO-T2.md), [coleção Postman](docs/POSTMAN.json)
-e [roteiro de apresentação](docs/APRESENTACAO-T2.md).
-
-As credenciais iniciais estão abaixo; utilize HTTPS fora do ambiente local.
+Projeto da disciplina de Aplicações para Internet. Sistema em Java para gerenciar plantas domésticas, ambientes, cuidados e lembretes, com telas web (JSP) e uma **API REST de plantas** (Trabalho T2).
 
 ## 👥 Integrantes
 
 - Pedro Henrique – RA: 5162347
 - Miguel Garcia – RA: 5160094
 
-## 📌 Visão Geral
+## ✅ Requisitos do Trabalho T2
 
-A aplicação permite que usuários cadastrem, consultem e gerenciem:
-
-- plantas domésticas
-- ambientes da casa onde cada planta é mantida
-- tipos de cuidados botânicos
-- lembretes de manutenção e rotina de cuidado
-- perfis de acesso e usuários do sistema
-
-O sistema foi implementado com Java, Jakarta Servlet, JSP, JSTL, JDBC, MySQL e Docker, seguindo a organização em camadas MVC.
-
-## ✨ Funcionalidades
-
-- autenticação de usuários com sessão
-- cadastro e edição de usuários
-- controle de perfis (Administrador e Jardineiro)
-- cadastro de ambientes
-- cadastro de plantas com vínculo a usuário e ambiente
-- cadastro de tipos de cuidado
-- agendamento de lembretes por planta e cuidado
-- atualização do status dos lembretes (PENDENTE, CONCLUIDO, CANCELADO)
-- filtros de acesso para rotas protegidas
-- mensagens de sucesso e erro na interface
-
-## 🏗️ Arquitetura
-
-A estrutura principal do código segue o padrão MVC:
-
-- `br.com.mvc.model` — entidades de negócio
-- `br.com.mvc.dao` — acesso ao banco com JDBC
-- `br.com.mvc.service` — regras de negócio e validações
-- `br.com.mvc.controller` — servlets responsáveis por requisições HTTP
-- `br.com.mvc.filter` — controle de autenticação e proteção de rotas
-- `src/main/webapp/WEB-INF/jsp` — páginas JSP da camada de visualização
-
-## 🗄️ Banco de Dados
-
-O banco é criado automaticamente pelo script `init.sql` e inclui as tabelas:
-
-- `perfis`
-- `usuarios`
-- `ambientes`
-- `cuidados`
-- `plantas`
-- `lembretes`
-
-Além disso, o script já insere dados iniciais para testes, como usuários, perfis, ambientes, cuidados e plantas.
-
-## 🔐 Usuários padrão
-
-Os usuários de seed criados no banco são:
-
-- login: `pedro` | senha: `123456`
-- login: `miguel` | senha: `123456`
-- login: `teste` | senha: `123456`
-
-A senha é armazenada em formato BCrypt.
+| Requisito | Como foi atendido |
+|---|---|
+| API RESTful em Java com MVC | Endpoints em `/api/plantas`, entrada e saída em JSON |
+| Camadas Controller, Service e DAO | `controller/api` → `service` → `dao` |
+| CRUD sobre uma entidade | Entidade **Planta** (criar, listar, consultar, alterar, excluir) |
+| Banco MySQL | MySQL 8.4 via Docker, criado pelo `init.sql` |
+| Boas práticas de organização | Pacotes por camada, DTOs, tratamento central de erros e status HTTP corretos |
+| Documentação dos endpoints | Seção [API REST](#-api-rest-de-plantas) deste README |
 
 ## 🧰 Tecnologias
 
-- Java 17
-- Maven
-- Jakarta Servlet 6.0
-- JSP + JSTL
-- MySQL 8.4
-- Apache Tomcat 10.1
-- Docker e Docker Compose
-- JUnit 4 para testes
+Java 17, Maven, Jakarta Servlet 6.0, JSP/JSTL, JDBC, MySQL 8.4, Gson, BCrypt, Tomcat 10.1, Docker Compose e JUnit 4.
+
+## 🏗️ Arquitetura
+
+```text
+br.com.mvc
+├── controller        Servlets das telas JSP
+│   └── api           API REST (PlantaApiServlet, ApiJson, ApiException)
+├── dto               Objetos de entrada e saída da API (PlantaEntrada, PlantaSaida)
+├── service           Regras de negócio e validações
+├── dao               Acesso ao MySQL com JDBC
+├── model             Entidades
+├── filter            AuthFilter (telas, por sessão) e ApiAuthFilter (API, HTTP Basic)
+└── security          Hash de senhas (BCrypt)
+```
+
+Fluxo de uma requisição à API:
+
+```text
+Requisição → ApiAuthFilter → PlantaApiServlet → PlantaService → PlantaDAO → MySQL → JSON
+```
 
 ## 🚀 Como executar
 
-### Pré-requisitos
+Pré-requisitos: JDK 17+, Maven 3.8+, Docker e Docker Compose.
 
-- JDK 17+
-- Maven 3.8+
-- Docker + Docker Compose
-
-### 1. Subir os containers
-
-Na raiz do projeto, execute:
-
-```bash
-docker compose up -d
-```
-
-Esse comando inicia:
-
-- container do MySQL na porta 3306
-- container do Tomcat na porta 8090 (mapeada para a 8080 interna)
-
-### 2. Compilar o projeto
+1. Gerar o WAR (ele é salvo na pasta `deploy`):
 
 ```bash
 mvn clean package
 ```
 
-O WAR gerado é empacotado para a pasta `deploy` conforme configuração do Maven.
-
-### 3. Acessar a aplicação
-
-Após a compilação e o container estar funcionando, acesse:
-
-- http://localhost:8090/mvc/
-
-### 4. Conexão com banco
-
-- host: `localhost`
-- porta: `3306`
-- database: `mvcplantas`
-- usuário: `mvc_user`
-- senha: `mvc123`
-
-## 📁 Estrutura do projeto
-
-```text
-mvc/
-├── docker-compose.yml
-├── init.sql
-├── pom.xml
-├── README.md
-├── deploy/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   └── webapp/
-│   └── test/
-├── target/
-└── mysql/
-```
-
-## 🧪 Testes
-
-O projeto contém testes unitários na pasta `src/test/java`, cobrindo regras de negócio dos serviços principais.
-
-Para executar os testes:
+2. Subir o MySQL e o Tomcat:
 
 ```bash
-mvn test
+docker compose up -d
 ```
 
-## ✅ Observações
+3. Aguardar cerca de 30 segundos e acessar: http://localhost:8090/mvc/
 
-- O processo de autenticação protege rotas internas e redireciona usuários não autenticados para a tela de login.
-- A aplicação foi pensada para uso em ambiente acadêmico e demonstração de MVC com Java EE/Jakarta.
-- O arquivo `docker-compose.yml` já automatiza a inicialização do banco e do servidor web.
+Ao gerar um novo WAR, o Tomcat reimplanta sozinho (por uns 20 segundos as páginas retornam 404 e as sessões são encerradas).
 
----
+Banco de dados: host `localhost`, porta `3306`, database `mvcplantas`, usuário `mvc_user`, senha `mvc123`.
+
+Para rodar os testes: `mvn test`.
+
+### Usuários de teste
+
+| Login | Senha | Perfil |
+|---|---|---|
+| `pedro` | `123456` | Administrador |
+| `miguel` | `123456` | Administrador |
+| `teste` | `123456` | Jardineiro |
+
+As senhas são guardadas com BCrypt.
+
+## 🌐 API REST de Plantas
+
+Base: `http://localhost:8090/mvc/api/plantas`
+
+**Autenticação:** HTTP Basic em todas as requisições (ex.: `pedro` / `123456`). A API não usa sessão. No Postman: *Authorization → Basic Auth*.
+
+### Endpoints
+
+| Método | URL | Descrição | Sucesso |
+|---|---|---|---|
+| GET | `/api/plantas` | Lista todas as plantas | 200 |
+| GET | `/api/plantas/{id}` | Consulta uma planta | 200 |
+| POST | `/api/plantas` | Cria uma planta | 201 (com `Location`) |
+| PUT | `/api/plantas/{id}` | Substitui os dados da planta | 200 |
+| DELETE | `/api/plantas/{id}` | Exclui a planta | 204 |
+
+### Corpo do POST e do PUT
+
+```json
+{
+  "nomePopular": "Manjericão",
+  "nomeCientifico": "Ocimum basilicum",
+  "dataAquisicao": "2026-11-13",
+  "observacoes": "Vaso na varanda",
+  "usuarioId": 1,
+  "ambienteId": 1
+}
+```
+
+| Campo | Regra |
+|---|---|
+| `nomePopular` | Obrigatório, até 150 caracteres |
+| `nomeCientifico` | Opcional, até 150 caracteres |
+| `dataAquisicao` | Opcional, formato `AAAA-MM-DD` |
+| `observacoes` | Opcional |
+| `usuarioId` | Obrigatório, deve ser um usuário existente |
+| `ambienteId` | Obrigatório, deve ser um ambiente existente |
+
+O `id` não vai no corpo: no POST é gerado pelo banco e no PUT vem da URL. Campos desconhecidos são rejeitados. No PUT, os campos opcionais não enviados ficam vazios (`null`).
+
+Resposta de uma planta:
+
+```json
+{
+  "id": 4,
+  "nomePopular": "Manjericão",
+  "nomeCientifico": "Ocimum basilicum",
+  "dataAquisicao": "2026-11-13",
+  "observacoes": "Vaso na varanda",
+  "usuarioId": 1,
+  "ambienteId": 1
+}
+```
+
+### Erros
+
+Todo erro volta em JSON:
+
+```json
+{
+  "status": 422,
+  "codigo": "DADOS_INVALIDOS",
+  "mensagem": "Revise os dados da planta.",
+  "detalhes": ["Nome popular da planta é obrigatório."]
+}
+```
+
+| Status | Quando acontece |
+|---|---|
+| 400 | JSON malformado, campo desconhecido, tipo errado ou ID inválido na URL |
+| 401 | Credenciais ausentes ou inválidas |
+| 404 | Planta ou rota inexistente |
+| 405 | Método não permitido para a URL |
+| 409 | Exclusão de planta que tem lembretes vinculados |
+| 413 | Corpo maior que 128 KiB |
+| 415 | `Content-Type` diferente de `application/json` |
+| 422 | Dados inválidos (nome vazio, usuário ou ambiente inexistente, data inválida) |
+| 500 | Erro interno (os detalhes ficam só no log do servidor) |
+
+### Exemplos com curl
+
+No Windows, use `curl.exe`. Os IDs 1 de usuário e de ambiente existem na carga inicial.
+
+```bash
+# Listar
+curl -i -u pedro:123456 http://localhost:8090/mvc/api/plantas
+
+# Consultar
+curl -i -u pedro:123456 http://localhost:8090/mvc/api/plantas/1
+
+# Criar
+curl -i -u pedro:123456 -X POST -H "Content-Type: application/json" \
+  -d '{"nomePopular":"Manjericão","nomeCientifico":"Ocimum basilicum","dataAquisicao":"2026-11-13","observacoes":"Vaso na varanda","usuarioId":1,"ambienteId":1}' \
+  http://localhost:8090/mvc/api/plantas
+
+# Alterar (troque 5 pelo ID retornado no POST)
+curl -i -u pedro:123456 -X PUT -H "Content-Type: application/json" \
+  -d '{"nomePopular":"Manjericão roxo","usuarioId":1,"ambienteId":1}' \
+  http://localhost:8090/mvc/api/plantas/5
+
+# Excluir
+curl -i -u pedro:123456 -X DELETE http://localhost:8090/mvc/api/plantas/5
+
+# Sem autenticação (401)
+curl -i http://localhost:8090/mvc/api/plantas
+```
+
+No PowerShell, o JSON com aspas pode dar problema no `-d`. Use um arquivo: `-d "@planta.json"`.
+
+## 💻 Telas do sistema (JSP)
+
+Além da API, o sistema tem telas protegidas por login para gerenciar plantas, ambientes, cuidados, lembretes, usuários e perfis (estes dois só para Administrador). A lista de plantas e a API usam o mesmo banco e as mesmas regras de negócio.
+
+## 🗄️ Banco de Dados
+
+O `init.sql` cria as tabelas `perfis`, `usuarios`, `ambientes`, `cuidados`, `plantas` e `lembretes` e insere dados iniciais para teste. A API não exige nenhuma tabela nova.
