@@ -2,6 +2,25 @@
 
 Projeto acadêmico desenvolvido para a disciplina de Aplicações para Internet, com foco em arquitetura MVC em Java para a gestão de plantas domésticas, ambientes, cuidados e lembretes.
 
+## API REST - Trabalho T2
+
+A continuação do projeto acrescenta um CRUD REST de **plantas**, preservando as telas JSP,
+as camadas Controller/Service/DAO e o banco MySQL.
+
+- Base local: `http://localhost:8090/mvc/api/plantas`.
+- `GET /api/plantas`: listar; `GET /api/plantas/{id}`: consultar.
+- `POST /api/plantas`: criar (201 e Location).
+- `PUT /api/plantas/{id}`: substituir os dados editáveis (200).
+- `DELETE /api/plantas/{id}`: excluir (204), com bloqueio de vínculos (409).
+- Autenticação HTTP Basic em cada requisição; entrada e saída JSON UTF-8.
+- Senhas/hashes não integram o contrato público da API.
+
+Documentação: [endpoints, payloads e exemplos](docs/API.md).
+Material: [planejamento](docs/PLANEJAMENTO-T2.md), [coleção Postman](docs/POSTMAN.json)
+e [roteiro de apresentação](docs/APRESENTACAO-T2.md).
+
+As credenciais iniciais estão abaixo; utilize HTTPS fora do ambiente local.
+
 ## 👥 Integrantes
 
 - Pedro Henrique – RA: 5162347
@@ -96,7 +115,7 @@ docker compose up -d
 Esse comando inicia:
 
 - container do MySQL na porta 3306
-- container do Tomcat na porta 8080
+- container do Tomcat na porta 8090 (mapeada para a 8080 interna)
 
 ### 2. Compilar o projeto
 
@@ -110,7 +129,7 @@ O WAR gerado é empacotado para a pasta `deploy` conforme configuração do Mave
 
 Após a compilação e o container estar funcionando, acesse:
 
-- http://localhost:8080/mvc/
+- http://localhost:8090/mvc/
 
 ### 4. Conexão com banco
 

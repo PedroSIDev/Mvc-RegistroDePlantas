@@ -2,6 +2,9 @@ package br.com.mvc.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +60,21 @@ public class PlantaDAO extends MysqlDAO {
     public void inserir(Planta planta) {
         String sql = "INSERT INTO plantas (nome_popular, nome_cientifico, data_aquisicao, observacoes, usuario_id, ambiente_id) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
-        try {
-            super.executarUpdate(sql, planta.getNomePopular(), planta.getNomeCientifico(), planta.getDataAquisicao(),
-                    planta.getObservacoes(), planta.getUsuarioId(), planta.getAmbienteId());
+        try (Connection conexao = banco.abrirConexao();
+                PreparedStatement ps = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, planta.getNomePopular());
+            ps.setString(2, planta.getNomeCientifico());
+            ps.setString(3, planta.getDataAquisicao());
+            ps.setString(4, planta.getObservacoes());
+            ps.setObject(5, planta.getUsuarioId());
+            ps.setObject(6, planta.getAmbienteId());
+            ps.executeUpdate();
+            try (ResultSet chaves = ps.getGeneratedKeys()) {
+                if (!chaves.next()) {
+                    throw new SQLException("O banco não retornou o ID da planta criada.");
+                }
+                planta.setId(chaves.getLong(1));
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao inserir planta.", e);
         }

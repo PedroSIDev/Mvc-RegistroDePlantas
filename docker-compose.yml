@@ -34,7 +34,7 @@ services:
       DB_PASSWORD: mvc123
 
     ports:
-      - "8080:8080"
+      - "8090:8080"
 
     volumes:
       - ./deploy:/usr/local/tomcat/webapps

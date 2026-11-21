@@ -28,21 +28,17 @@ public class MysqlDAO {
         }
     }
 
-    // Consultas constantes dos DAOs, nunca nomes recebidos de uma requisição.
     protected void excluirSemVinculos(Long id, String consultaRegistro, String consultaVinculo,
             String exclusao, String mensagemVinculo) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("Selecione um registro válido para excluir.");
         }
-        // Conexão exclusiva: os bloqueios e a exclusão pertencem à mesma transação.
         try (Connection conexao = banco.abrirConexao()) {
             conexao.setAutoCommit(false);
             try {
                 if (!existe(conexao, consultaRegistro, id)) {
                     throw new IllegalArgumentException("O registro não foi encontrado ou já foi excluído.");
                 }
-                // Bloquear o pai impede novos vínculos até o fim da operação,
-                // inclusive em bancos antigos que ainda possuem ON DELETE CASCADE.
                 if (consultaVinculo != null && existe(conexao, consultaVinculo, id)) {
                     throw new IllegalArgumentException(mensagemVinculo);
                 }

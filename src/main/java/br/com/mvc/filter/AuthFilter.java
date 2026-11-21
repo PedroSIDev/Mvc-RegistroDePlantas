@@ -27,6 +27,12 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        String caminhoApi = httpRequest.getServletPath();
+        if ("/api".equals(caminhoApi) || (caminhoApi != null && caminhoApi.startsWith("/api/"))) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         httpRequest.setCharacterEncoding("UTF-8");
         httpResponse.setCharacterEncoding("UTF-8");
 

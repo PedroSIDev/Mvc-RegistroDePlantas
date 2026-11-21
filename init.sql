@@ -5,9 +5,6 @@ CREATE DATABASE IF NOT EXISTS mvcplantas
 USE mvcplantas;
 SET NAMES utf8mb4;
 
--- =========================================
--- TABELA 1: PERFIS
--- =========================================
 CREATE TABLE perfis (
     id BIGINT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
@@ -15,9 +12,6 @@ CREATE TABLE perfis (
     PRIMARY KEY (id)
 );
 
--- =========================================
--- TABELA 2: USUÁRIOS
--- =========================================
 CREATE TABLE usuarios (
     id BIGINT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(150) NOT NULL,
@@ -30,9 +24,6 @@ CREATE TABLE usuarios (
     CONSTRAINT fk_usuario_perfil FOREIGN KEY (perfil_id) REFERENCES perfis(id)
 );
 
--- =========================================
--- TABELA 3: AMBIENTES (Locais da casa)
--- =========================================
 CREATE TABLE ambientes (
     id BIGINT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
@@ -41,9 +32,6 @@ CREATE TABLE ambientes (
     PRIMARY KEY (id)
 );
 
--- =========================================
--- TABELA 4: CUIDADOS (Catálogo de cuidados)
--- =========================================
 CREATE TABLE cuidados (
     id BIGINT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
@@ -53,9 +41,6 @@ CREATE TABLE cuidados (
     PRIMARY KEY (id)
 );
 
--- =========================================
--- TABELA 5: PLANTAS
--- =========================================
 CREATE TABLE plantas (
     id BIGINT NOT NULL AUTO_INCREMENT,
     nome_popular VARCHAR(150) NOT NULL,
@@ -70,16 +55,13 @@ CREATE TABLE plantas (
     CONSTRAINT fk_planta_ambiente FOREIGN KEY (ambiente_id) REFERENCES ambientes(id)
 );
 
--- =========================================
--- TABELA 6: LEMBRETES (Lembretes e histórico de cuidados)
--- =========================================
 CREATE TABLE lembretes (
     id BIGINT NOT NULL AUTO_INCREMENT,
     planta_id BIGINT NOT NULL,
     cuidado_id BIGINT NOT NULL,
     data_agendada DATE NOT NULL,
     data_realizada DATE,
-    status VARCHAR(50) NOT NULL DEFAULT 'PENDENTE', -- PENDENTE, CONCLUIDO, CANCELADO
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDENTE',
     observacao VARCHAR(255),
 
     PRIMARY KEY (id),
@@ -87,15 +69,11 @@ CREATE TABLE lembretes (
     CONSTRAINT fk_lembrete_cuidado FOREIGN KEY (cuidado_id) REFERENCES cuidados(id)
 );
 
--- =========================================
--- DADOS PARA TESTE (SEED)
--- =========================================
 
 INSERT INTO perfis (nome) VALUES
     ('Administrador'),
     ('Jardineiro');
 
--- Senha padrao inicial dos usuarios de seed: 123456 (criptografada com BCrypt)
 INSERT INTO usuarios (nome, login, senha, perfil_id) VALUES
     ('Pedro Henrique', 'pedro', '$2a$12$VlW/RXxONLPaguKIAdkZU.TOoDvQVoBid9vkTnWe.oZQ/0.4u55Cm', 1),
     ('Miguel Garcia', 'miguel', '$2a$12$VlW/RXxONLPaguKIAdkZU.TOoDvQVoBid9vkTnWe.oZQ/0.4u55Cm', 1),
@@ -125,11 +103,7 @@ INSERT INTO lembretes (planta_id, cuidado_id, data_agendada, data_realizada, sta
     (2, 1, '2026-09-15', NULL, 'PENDENTE', 'Rega quinzenal'),
     (3, 2, '2026-09-12', NULL, 'PENDENTE', 'Aplicar adubo diluído na água');
 
--- =========================================
--- CONSULTAS DE EXEMPLO
--- =========================================
 
--- Listar plantas com seus respectivos usuários e ambientes
 SELECT 
     p.id,
     p.nome_popular,
@@ -140,7 +114,6 @@ FROM plantas p
 INNER JOIN usuarios u ON u.id = p.usuario_id
 INNER JOIN ambientes a ON a.id = p.ambiente_id;
 
--- Listar lembretes pendentes com detalhes da planta e do cuidado
 SELECT 
     l.id,
     p.nome_popular AS planta,
