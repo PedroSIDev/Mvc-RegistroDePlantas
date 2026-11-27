@@ -13,9 +13,8 @@ buildNumber.properties
 # Compilação Java
 *.class
 
-# Diretório de deploy gerado pelo maven-war-plugin
-deploy/*
-!deploy/.gitkeep
+# Arquivo .env local do Docker Compose
+.env
 
 # Banco de dados local MySQL do Docker
 mysql/

@@ -1,47 +1,99 @@
+# Registro de Plantas — 3 containers independentes
+#
+#   mvc   -> aplicacao web (JSP/Servlets)        http://localhost:8090
+#   api   -> API REST de plantas (JSON)          http://localhost:8081/api/plantas
+#   mysql -> banco de dados compartilhado        localhost:3306
+#
+# O MVC chama a API pela rede interna do Compose (http://api:8080), nunca por localhost.
+# Subir tudo:  docker compose up --build -d
+#
+# Os valores entre ${...:-padrao} podem ser trocados por variaveis de ambiente ou arquivo .env.
+
 services:
 
   mysql:
     image: mysql:8.4
-    container_name: mvc-java-mysql
-
+    container_name: plantas-mysql
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mvcplantas
-      MYSQL_USER: mvc_user
-      MYSQL_PASSWORD: mvc123
-
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-mvcplantas}
+      MYSQL_USER: ${DB_USER:-mvc_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-mvc123}
+      TZ: America/Sao_Paulo
     ports:
-      - "3306:3306"
-
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
+      # Executado apenas na primeira inicializacao do volume
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      # TCP (127.0.0.1) e consulta a uma tabela: so fica "healthy" depois que o init.sql terminou
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1 FROM lembretes LIMIT 1' $$MYSQL_DATABASE"]
       interval: 5s
       timeout: 10s
-      retries: 20
+      retries: 30
       start_period: 20s
+    networks:
+      - plantas-net
 
-  tomcat:
-    image: tomcat:10.1-jdk21
-    container_name: mvc-java-tomcat
-
+  api:
+    build: ./api
+    image: plantas-api
+    container_name: plantas-api
+    restart: unless-stopped
     environment:
       DB_HOST: mysql
-      DB_USER: mvc_user
-      DB_PASSWORD: mvc123
-
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-mvcplantas}
+      DB_USER: ${DB_USER:-mvc_user}
+      DB_PASSWORD: ${DB_PASSWORD:-mvc123}
+      TZ: America/Sao_Paulo
     ports:
-      - "8090:8080"
-
-    volumes:
-      - ./deploy:/usr/local/tomcat/webapps
-
+      - "${API_PORT:-8081}:8080"
     depends_on:
       mysql:
         condition: service_healthy
+    healthcheck:
+      # 401 = aplicacao no ar e filtro de autenticacao respondendo
+      test: ["CMD-SHELL", "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/plantas | grep -q 401"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+    networks:
+      - plantas-net
+
+  mvc:
+    build: ./mvc
+    image: plantas-mvc
+    container_name: plantas-mvc
+    restart: unless-stopped
+    environment:
+      # Comunicacao MVC -> API pelo nome do servico Docker
+      API_BASE_URL: http://api:8080
+      API_USUARIO: ${API_USUARIO:-pedro}
+      API_SENHA: ${API_SENHA:-123456}
+      # Banco: usado pelos modulos que ainda nao tem API (usuarios, perfis, ambientes, cuidados, lembretes)
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-mvcplantas}
+      DB_USER: ${DB_USER:-mvc_user}
+      DB_PASSWORD: ${DB_PASSWORD:-mvc123}
+      TZ: America/Sao_Paulo
+    ports:
+      - "${MVC_PORT:-8090}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    networks:
+      - plantas-net
+
+networks:
+  plantas-net:
+    name: plantas-net
 
 volumes:
   mysql_data:
